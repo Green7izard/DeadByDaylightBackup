@@ -70,7 +70,7 @@ namespace DeadByDaylightBackup.Utility
 
         protected override string ConvertToText(ICollection<Backup> input)
         {
-            return string.Join(Environment.NewLine, input.Select(x => x.FullFileName));
+            return string.Join(Environment.NewLine, input.OrderBy(x=>x.Date).ThenBy(x=>x.UserCode).Select(x => x.FullFileName));
         }
 
         public string GetBackupFileLocation()
@@ -100,7 +100,7 @@ namespace DeadByDaylightBackup.Utility
 
         protected override string ConvertToText(ICollection<FilePath> input)
         {
-            return string.Join(Environment.NewLine, input.Select(x => x.Path));
+            return string.Join(Environment.NewLine, input.Select(x => x.Path).OrderBy(x=>x));
         }
 
     }

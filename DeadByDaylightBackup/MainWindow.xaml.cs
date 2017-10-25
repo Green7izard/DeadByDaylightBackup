@@ -110,7 +110,7 @@ namespace DeadByDaylightBackup
                 BackUpGrid.RowDefinitions.Clear();
                 BackUpGrid.RowDefinitions.Add(first);
                 int i = 1;
-                foreach (var row in backupRows)
+                foreach (var row in backupRows.OrderBy(x=>x.Identity.Date).ThenBy(x=>x.Identity.UserCode))
                 {
                     BackUpGrid.RowDefinitions.Add(row);
                     row.RowNumber = i;
@@ -127,7 +127,7 @@ namespace DeadByDaylightBackup
                 FoldersGrid.RowDefinitions.Clear();
                 FoldersGrid.RowDefinitions.Add(first);  
                 int i = 1;
-                foreach (var row in fileRows)
+                foreach (var row in fileRows.OrderBy(x=>x.Identity.Path))
                 {
                     FoldersGrid.RowDefinitions.Add(row);
                     row.RowNumber = i;

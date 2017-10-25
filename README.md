@@ -49,4 +49,4 @@ Change Request submitted!
 ## License
 
 MIT License
-Copyright (c) 2017 Bas van Summeren <Basvansummeren@hotmail.com>
+Copyright (c) 2017 Bas van Summeren

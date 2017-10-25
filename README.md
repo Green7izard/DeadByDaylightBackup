@@ -6,6 +6,12 @@ Simple Backup tool for Dead By Daylight Save Files
 
 A very simple low tech solution for backing up your DeadByDaylight Save files
 
+## Installation
+
+Download the Latest release from https://github.com/Green7izard/DeadByDaylightBackup/tree/master/Releases
+Extract it anywhere!
+Execute it!
+
 ## How To Add your Saves
 
 In the upper left textbox you can add the path where your save file exists. Most of the times it will be:
@@ -33,6 +39,12 @@ All backups are shown in the lower left.
 
 To delete a older backup: Push the delete button. The backupfile will be deleted.
 To Restore a backup: Push the restore button. !!ATTENTION!! Steam Cloud Save might try to overwrite your file again. Disable it temporary to prevent problems!
+
+## Error Handling
+
+The application ignores most errors.
+This is a Feature not a Bug!
+Change Request submitted!
 
 ## License
 

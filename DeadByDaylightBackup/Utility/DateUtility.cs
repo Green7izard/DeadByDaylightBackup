@@ -9,7 +9,7 @@ namespace DeadByDaylightBackup.Utility
 {
     public static class DateUtility
     {
-        public const string DateFormat = "yyyyMMddhhmm";
+        public const string DateFormat = "yyyyMMddHHmm";
 
         public static string SimpleFormat(this DateTime? time)
         {

@@ -16,6 +16,8 @@ using DeadByDaylightBackup.Data;
 using DeadByDaylightBackup.Interface;
 using DeadByDaylightBackup.Utility;
 using DeadByDaylightBackup.View;
+using NLog;
+
 namespace DeadByDaylightBackup
 {
     /// <summary>
@@ -30,8 +32,11 @@ namespace DeadByDaylightBackup
         private ICollection<FilePathRow> fileRows;
         private ICollection<BackUpRow> backupRows;
 
-        public MainWindow(IFilePathHandler fileHandler, IBackupHandler backupHand) : base()
+        private readonly Logger _logger;
+
+        public MainWindow(IFilePathHandler fileHandler, IBackupHandler backupHand, Logger logger) : base()
         {
+            _logger = logger;
             fileRows = new List<FilePathRow>(2);
             backupRows = new List<BackUpRow>(2);
             InitializeComponent();

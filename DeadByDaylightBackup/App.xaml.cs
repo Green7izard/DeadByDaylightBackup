@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using DeadByDaylightBackup.Utility;
 using DeadByDaylightBackup.Program;
+using NLog;
 
 namespace DeadByDaylightBackup
 {
@@ -22,19 +23,25 @@ namespace DeadByDaylightBackup
             window.Close();
             window = null;
         }
+        Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            FileManager manager = new FileManager();
-            FilePathHandler filehandle = new FilePathHandler(manager, new FilePathSettingsManager());
-            BackupHandler backuphandle = new BackupHandler(manager, new BackupSettingsManager());
-            window = new MainWindow(filehandle, backuphandle);
-            window.ShowInTaskbar = true;
-            base.OnStartup(e);
-            // here you take control
+            try {
+                FileManager manager = new FileManager();
+                FilePathHandler filehandle = new FilePathHandler(manager, new FilePathSettingsManager(), LogManager.GetLogger("FileHandler"));
+                BackupHandler backuphandle = new BackupHandler(manager, new BackupSettingsManager(), LogManager.GetLogger("BackupHandler"));
+                window = new MainWindow(filehandle, backuphandle, LogManager.GetLogger("UI Logger"));
+                window.ShowInTaskbar = true;
+                base.OnStartup(e);
 
-            window.ShowDialog();
 
+                window.ShowDialog();
+            }
+            catch(Exception ex)
+            {
+                _logger.Fatal(ex, "Fatal error in application occured! {0}", ex.Message);
+            }
         }
 
 

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DeadByDaylightBackup.Interface;
 using DeadByDaylightBackup.Data;
 using DeadByDaylightBackup.Utility;
+using NLog;
 
 namespace DeadByDaylightBackup.Program
 {
@@ -16,11 +17,13 @@ namespace DeadByDaylightBackup.Program
 
         private readonly FileManager _filemanager;
         private readonly FilePathSettingsManager _settingManager;
+        private readonly Logger _logger;
 
-        public FilePathHandler(FileManager filemanager, FilePathSettingsManager settingManager)
+        public FilePathHandler(FileManager filemanager, FilePathSettingsManager settingManager, Logger logger)
         {
             _settingManager = settingManager;
             _filemanager = filemanager;
+            _logger = logger;
             long id = 1;
             foreach (var setting in _settingManager.GetSettings())
             {
@@ -119,7 +122,10 @@ namespace DeadByDaylightBackup.Program
                     {
                         trigger.AddFilePath(backup);
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        _logger.Warn(ex, "{1} has caused an errror!", trigger.GetType());
+                    }
                 }
         }
         private void TriggerDelete(long id)
@@ -131,7 +137,10 @@ namespace DeadByDaylightBackup.Program
                     {
                         trigger.RemoveFilePath(id);
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        _logger.Warn(ex, "{1} has caused an errror!", trigger.GetType());
+                    }
                 }
         }
 

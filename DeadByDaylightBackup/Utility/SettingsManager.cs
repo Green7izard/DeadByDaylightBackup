@@ -62,7 +62,7 @@ namespace DeadByDaylightBackup.Utility
                 var pathString = result.FullFileName.Replace(result.FileName, "").Trim(' ', '\\','/', '.').Split('\\');
                 var dateString = pathString[pathString.Length-2];
                 var playerstring = pathString[pathString.Length - 1];
-                result.Date = dateString.ToSimpleDate();
+                result.Date = dateString.ToSimpleShortDate();
                 result.UserCode = playerstring;
             }
             return results;

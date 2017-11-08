@@ -21,7 +21,7 @@ namespace DeadByDaylightBackup.Data
             var filePath = FullFileName.Replace(FileName, "").Split('\\');
             UserCode = filePath.Last();
             var datestring = filePath[filePath.Length - 2];
-            Date = datestring.ToSimpleDate();
+            Date = datestring.ToSimpleShortDate();
         }
 
         public string FullFileName { get; set; }

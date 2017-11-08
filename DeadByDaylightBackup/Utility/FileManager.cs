@@ -75,6 +75,25 @@ namespace DeadByDaylightBackup.Utility
             Directory.CreateDirectory(folder);
         }
 
+        internal static long GetFileSize(string fileName)
+        {
+            return new System.IO.FileInfo(fileName).Length;
+        }
+
+        internal static string GetReadableFileSize(string fileName)
+        {
+            string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+            double len = GetFileSize(fileName);
+            int order = 0;
+            while (len >= 1024 && order < sizes.Length - 1)
+            {
+                order++;
+                len = len / 1024;
+            }
+            string result = String.Format("{0:0.##} {1}", len, sizes[order]);
+            return result;
+        }
+
         internal static void Copy(string filepath, string targetFile)
         {
             File.Copy(filepath, targetFile, true);

@@ -9,25 +9,51 @@ namespace DeadByDaylightBackup.Utility
 {
     public static class DateUtility
     {
-        public const string DateFormat = "yyyyMMddHHmm";
-
-        public static string SimpleFormat(this DateTime? time)
+        #region shortdate
+        public const string ShortDateFormat = "yyyyMMddHHmm";
+      
+        
+        public static string SimpleShortFormat(this DateTime? time)
         {
-            return SimpleFormat(time.GetValueOrDefault(DateTime.Now));
+            return SimpleShortFormat(time.GetValueOrDefault(DateTime.Now));
         }
 
-        public static string SimpleFormat(this DateTime time)
+        public static string SimpleShortFormat(this DateTime time)
         {
-            return time.ToString(DateFormat);
+            return time.ToString(ShortDateFormat);
         }
 
-        public static DateTime ToSimpleDate(this string timestamp)
+        public static DateTime ToSimpleShortDate(this string timestamp)
         {
             if(string.IsNullOrWhiteSpace(timestamp))
             {
-                throw new NullReferenceException("Input of ToSimpleDate cannot be null or a empty string");
+                throw new NullReferenceException("Input of ToSimpleShortDate cannot be null or a empty string");
             }
-            return DateTime.ParseExact(timestamp.Trim(' ', '\t','\r', '\n','.',','), DateFormat, CultureInfo.InvariantCulture);
+            return DateTime.ParseExact(timestamp.Trim(' ', '\t','\r', '\n','.',','), ShortDateFormat, CultureInfo.InvariantCulture);
         }
+        #endregion
+        #region longdate
+
+        public const string LongDateFormat = "yyyy-MM-dd HH:mm";
+        public static string SimpleLongFormat(this DateTime? time)
+        {
+            return SimpleLongFormat(time.GetValueOrDefault(DateTime.Now));
+        }
+
+        public static string SimpleLongFormat(this DateTime time)
+        {
+            return time.ToString(LongDateFormat);
+        }
+
+        public static DateTime ToSimpleLongDate(this string timestamp)
+        {
+            if (string.IsNullOrWhiteSpace(timestamp))
+            {
+                throw new NullReferenceException("Input of ToSimpleShortDate cannot be null or a empty string");
+            }
+            return DateTime.ParseExact(timestamp.Trim(' ', '\t', '\r', '\n', '.', ','), LongDateFormat, CultureInfo.InvariantCulture);
+        }
+        #endregion
+
     }
 }

@@ -38,6 +38,12 @@ namespace DeadByDaylightBackup.View
             ; set;
         }
 
+        public Label SizeLabel
+        {
+            get
+            ; set;
+        }
+
         public Label PathLabel
         {
             get
@@ -64,13 +70,13 @@ namespace DeadByDaylightBackup.View
                 Content = "Delete",
                 MaxHeight = IMaxHeight
             };
-            DeleteRowButton.SetValue(Grid.ColumnProperty, 3);
+            DeleteRowButton.SetValue(Grid.ColumnProperty, 4);
             RestoreButton = new Button
             {
                 Content = "Restore",
                 MaxHeight = IMaxHeight
             };
-            RestoreButton.SetValue(Grid.ColumnProperty, 4);
+            RestoreButton.SetValue(Grid.ColumnProperty, 5);
             PathLabel = new Label
             {
                 Content = Identity.FileName
@@ -80,12 +86,18 @@ namespace DeadByDaylightBackup.View
             PathLabel.SetValue(Grid.ColumnProperty, 0);
             DateLabel = new Label
             {
-                Content = Identity.Date.GetValueOrDefault().ToString("dd-MM-yyyy hh:mm")
+                Content = Identity.Date.GetValueOrDefault().SimpleLongFormat()
                 ,
                 MaxHeight = IMaxHeight
             };
-
             DateLabel.SetValue(Grid.ColumnProperty, 2);
+            SizeLabel = new Label
+            {
+                Content = FileManager.GetReadableFileSize(Identity.FullFileName)
+               ,
+                MaxHeight = IMaxHeight
+            };
+            SizeLabel.SetValue(Grid.ColumnProperty, 3);
             MaxHeight = IMaxHeight;
         }
 
@@ -100,6 +112,7 @@ namespace DeadByDaylightBackup.View
             RestoreButton.SetValue(Grid.RowProperty, value);
             PathLabel.SetValue(Grid.RowProperty, value);
             UserCodeLabel.SetValue(Grid.RowProperty, value);
+            SizeLabel.SetValue(Grid.RowProperty, value);
         }
     }
 }

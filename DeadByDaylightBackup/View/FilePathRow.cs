@@ -31,6 +31,12 @@ namespace DeadByDaylightBackup.View
             get
             ; set;
         }
+
+        public Label SizeLabel
+        {
+            get
+            ; set;
+        }
         public Label UserCodeLabel
         {
             get
@@ -44,7 +50,7 @@ namespace DeadByDaylightBackup.View
                 Content = "Delete",
                 MaxHeight = IMaxHeight
             };
-            DeleteRowButton.SetValue(Grid.ColumnProperty, 2);
+            DeleteRowButton.SetValue(Grid.ColumnProperty, 3);
             PathLabel = new Label
             {
                 Content = Identity.FileName
@@ -58,6 +64,12 @@ namespace DeadByDaylightBackup.View
                 MaxHeight = IMaxHeight
             };
             UserCodeLabel.SetValue(Grid.ColumnProperty, 1);
+            SizeLabel = new Label
+            {
+                Content = FileManager.GetReadableFileSize(Identity.Path),
+                MaxHeight = IMaxHeight
+            };
+            SizeLabel.SetValue(Grid.ColumnProperty, 2);
             MaxHeight = IMaxHeight;
         }
 
@@ -71,6 +83,7 @@ namespace DeadByDaylightBackup.View
             DeleteRowButton.SetValue(Grid.RowProperty, value);
             PathLabel.SetValue(Grid.RowProperty, value);
             UserCodeLabel.SetValue(Grid.RowProperty, value);
+            SizeLabel.SetValue(Grid.RowProperty, value);
         }
     }
 }

@@ -42,9 +42,9 @@ To Restore a backup: Push the restore button. !!ATTENTION!! Steam Cloud Save mig
 
 ## Error Handling
 
-The application ignores most errors.
-This is a Feature not a Bug!
-Change Request submitted!
+The application Will show exceptions in a popup
+It will also log them to the log folder.
+For logging it uses NLog. You can change the NLog config to your own liking!
 
 ## License
 

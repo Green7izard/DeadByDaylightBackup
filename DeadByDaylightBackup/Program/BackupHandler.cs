@@ -45,7 +45,7 @@ namespace DeadByDaylightBackup.Program
         public long CreateBackup(FilePath filepath)
         {
             string fileName = FileManager.GetFileName(filepath.Path);
-            string DateFolder = FileManager.MergePaths(_settingManager.GetBackupFileLocation(), filepath.LastEdited.SimpleFormat());
+            string DateFolder = FileManager.MergePaths(_settingManager.GetBackupFileLocation(), filepath.LastEdited.SimpleShortFormat());
             string Playerfolder = FileManager.MergePaths(DateFolder, filepath.UserCode);
             string targetFile = FileManager.MergePaths(Playerfolder, FileManager.GetFileName(filepath.Path));
             Backup backup = new Backup

@@ -94,7 +94,7 @@
     <Compile Include="View\BackupRow.cs" />
     <Compile Include="View\FilePathRow.cs" />
     <Compile Include="View\IdentifyableRowDefinition.cs" />
-    <Page Include="MainWindow.xaml">
+    <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -109,7 +109,7 @@
     <Compile Include="Interface\IBackupFileTrigger.cs" />
     <Compile Include="Interface\IFilePathHandler.cs" />
     <Compile Include="Interface\IFilePathTrigger.cs" />
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>

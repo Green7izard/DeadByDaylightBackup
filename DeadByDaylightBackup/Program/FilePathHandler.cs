@@ -27,9 +27,12 @@ namespace DeadByDaylightBackup.Program
             long id = 1;
             foreach (var setting in _settingManager.GetSettings())
             {
-                setting.Id = id;
-                BackupStore.Add(id, setting);
-                id++;
+                if (FileManager.FileExists(setting.Path))
+                {
+                    setting.Id = id;
+                    BackupStore.Add(id, setting);
+                    id++;
+                }
             }
         }
         public void Dispose()
@@ -163,7 +166,7 @@ namespace DeadByDaylightBackup.Program
             lock (BackupStore)
             {
                 FilePath path = BackupStore.Values.Single(x => x.UserCode == backup.UserCode);
-                 FileManager.Copy(backup.FullFileName, path.Path);
+                FileManager.Copy(backup.FullFileName, path.Path);
             }
         }
     }

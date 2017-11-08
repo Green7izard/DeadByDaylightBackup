@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DeadByDaylightBackup.Utility;
+using System;
 using System.IO;
-using DeadByDaylightBackup.Utility;
+using System.Linq;
 
 namespace DeadByDaylightBackup.Data
 {
     [Serializable]
     public class Backup : Identifyable
     {
-
-        public  Backup()
+        public Backup()
         {
         }
+
         public Backup(string fileName)
         {
             FullFileName = fileName;
@@ -42,6 +39,5 @@ namespace DeadByDaylightBackup.Data
             get;
             set;
         }
-
     }
 }

@@ -165,8 +165,8 @@ namespace DeadByDaylightBackup.Utility
                          }
                          catch
                          {
-                            //ERROR
-                        }
+                             //ERROR
+                         }
                      }
                  });
             }

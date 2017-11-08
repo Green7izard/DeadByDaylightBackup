@@ -3,7 +3,6 @@ using DeadByDaylightBackup.Utility;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using System.Linq;
 
 namespace DeadByDaylightBackup.Settings
 {
@@ -27,7 +26,8 @@ namespace DeadByDaylightBackup.Settings
             List<Backup> results = new List<Backup>(files.Length);
             foreach (var file in files)
             {
-                try {
+                try
+                {
                     Backup result = new Backup()
                     {
                         FullFileName = file

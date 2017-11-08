@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DeadByDaylightBackup.Data;
 using DeadByDaylightBackup.Interface;
-using DeadByDaylightBackup.Data;
+using DeadByDaylightBackup.Settings;
 using DeadByDaylightBackup.Utility;
 using NLog;
-using DeadByDaylightBackup.Settings;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DeadByDaylightBackup.Program
 {
-    class FilePathHandler : IFilePathHandler
+    internal class FilePathHandler : IFilePathHandler
     {
         private readonly IDictionary<long, FilePath> BackupStore = new Dictionary<long, FilePath>();
         private readonly IList<IFilePathTrigger> Triggerlist = new List<IFilePathTrigger>(1);
@@ -36,6 +34,7 @@ namespace DeadByDaylightBackup.Program
                 }
             }
         }
+
         public void Dispose()
         {
             lock (Triggerlist)
@@ -74,7 +73,6 @@ namespace DeadByDaylightBackup.Program
                                     return i;
                                 }
                             }
-
                     }
                     throw new ArgumentOutOfRangeException("No More room in long!");
                 }
@@ -108,7 +106,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Fatal(ex, "Failed to remove filepath '{0}' Because of {1}", id, ex.Message);
+                _logger.Error(ex, "Failed to remove filepath '{0}' Because of {1}", id, ex.Message);
                 throw;
             }
         }
@@ -131,7 +129,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Fatal(ex, "Failed to register trigger  Because of {0}", ex.Message);
+                _logger.Warn(ex, "Failed to register trigger  Because of {0}", ex.Message);
                 throw;
             }
             foreach (var val in this.BackupStore.Values)
@@ -139,7 +137,6 @@ namespace DeadByDaylightBackup.Program
                 trigger.AddFilePath(val);
             }
         }
-
 
         private void TriggerCreate(FilePath backup)
         {
@@ -156,6 +153,7 @@ namespace DeadByDaylightBackup.Program
                     }
                 }
         }
+
         private void TriggerDelete(long id)
         {
             lock (Triggerlist)
@@ -180,7 +178,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Fatal(ex, "Failed to get filepaths because of {0}", ex.Message);
+                _logger.Error(ex, "Failed to get filepaths because of {0}", ex.Message);
                 throw;
             }
         }
@@ -197,23 +195,24 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Fatal(ex, "Failed to search for filepaths because of {0}", ex.Message);
+                _logger.Warn(ex, "Failed to search for filepaths because of {0}", ex.Message);
                 throw;
             }
         }
 
         public void RestoreBackup(Backup backup)
         {
-            try { 
-            lock (BackupStore)
+            try
             {
-                FilePath path = BackupStore.Values.Single(x => x.UserCode == backup.UserCode);
-                FileManager.Copy(backup.FullFileName, path.Path);
-            }
+                lock (BackupStore)
+                {
+                    FilePath path = BackupStore.Values.Single(x => x.UserCode == backup.UserCode);
+                    FileManager.Copy(backup.FullFileName, path.Path);
+                }
             }
             catch (Exception ex)
             {
-                _logger.Fatal(ex, "Failed to get Restore backup '{0}' because of {1}",backup.FullFileName, ex.Message);
+                _logger.Fatal(ex, "Failed to get Restore backup '{0}' because of {1}", backup.FullFileName, ex.Message);
                 throw;
             }
         }

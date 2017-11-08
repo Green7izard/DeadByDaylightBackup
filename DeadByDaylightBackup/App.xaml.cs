@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using DeadByDaylightBackup.Program;
+using DeadByDaylightBackup.Settings;
 using DeadByDaylightBackup.Utility;
-using DeadByDaylightBackup.Program;
 using DeadByDaylightBackup.View;
 using NLog;
-using DeadByDaylightBackup.Settings;
+using System;
+using System.Windows;
 
 namespace DeadByDaylightBackup
 {
@@ -19,16 +14,19 @@ namespace DeadByDaylightBackup
     public partial class App : Application, IDisposable
     {
         #region privates
+
         /// <summary>
         /// Logger
         /// </summary>
-        Logger _logger = LogManager.GetCurrentClassLogger();
+        private Logger _logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// The window to keep track off. Disposed when the app is disposed
         /// </summary>
         private MainWindow _window;
-        #endregion
+
+        #endregion privates
+
         #region IDisposable
 
         /// <summary>
@@ -37,7 +35,6 @@ namespace DeadByDaylightBackup
         public void Dispose()
         {
             Dispose(true);
-          
         }
 
         /// <summary>
@@ -49,7 +46,8 @@ namespace DeadByDaylightBackup
             _window.Close();
             _window = null;
         }
-        #endregion
+
+        #endregion IDisposable
 
         /// <summary>
         /// Startup functionality
@@ -91,6 +89,5 @@ namespace DeadByDaylightBackup
                 throw;
             }
         }
-
     }
 }

@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using DeadByDaylightBackup.Data;
 using DeadByDaylightBackup.Interface;
-using DeadByDaylightBackup.Data;
+using DeadByDaylightBackup.Settings;
 using DeadByDaylightBackup.Utility;
 using NLog;
-using DeadByDaylightBackup.Settings;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DeadByDaylightBackup.Program
 {
@@ -31,6 +31,7 @@ namespace DeadByDaylightBackup.Program
                 id++;
             }
         }
+
         public void Dispose()
         {
             lock (Triggerlist)
@@ -40,8 +41,6 @@ namespace DeadByDaylightBackup.Program
                 BackupStore.Clear();
             }
         }
-
-
 
         public long CreateBackup(FilePath filepath)
         {
@@ -88,7 +87,6 @@ namespace DeadByDaylightBackup.Program
                 _logger.Fatal(ex, "Failed to backup '{0}' Because of {1}", filepath.Path, ex.Message);
                 throw;
             }
-
         }
 
         public void DeleteBackup(long id)
@@ -113,13 +111,10 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Fatal(ex, "Failed to remove backup '{0}' Because of {1}", id, ex.Message);
+                _logger.Error(ex, "Failed to remove backup '{0}' Because of {1}", id, ex.Message);
                 throw;
             }
-
         }
-
-
 
         public ICollection<Backup> GetBackups()
         {
@@ -128,18 +123,17 @@ namespace DeadByDaylightBackup.Program
                 lock (BackupStore)
                     return BackupStore.Select(x => x.Value).ToArray();
             }
-
             catch (Exception ex)
             {
-                _logger.Fatal(ex, "Failed to retrieve backups because of {0}", ex.Message);
+                _logger.Warn(ex, "Failed to retrieve backups because of {0}", ex.Message);
                 throw;
             }
-
         }
 
         public void Register(IBackupFileTrigger trigger)
         {
-            try {
+            try
+            {
                 lock (Triggerlist)
                 {
                     if (Triggerlist.Contains(trigger))
@@ -152,18 +146,16 @@ namespace DeadByDaylightBackup.Program
                     }
                 }
             }
-            
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                _logger.Warn(ex, "Failed to register trigger because of {0}",  ex.Message);
-                    throw;
+                _logger.Warn(ex, "Failed to register trigger because of {0}", ex.Message);
+                throw;
             }
-            
+
             foreach (var val in this.BackupStore.Values)
             {
                 trigger.AddBackupFile(val);
             }
-
         }
 
         private void TriggerCreate(Backup backup)
@@ -181,6 +173,7 @@ namespace DeadByDaylightBackup.Program
                     }
                 }
         }
+
         private void TriggerDelete(long id)
         {
             lock (Triggerlist)

@@ -12,7 +12,7 @@ namespace DeadByDaylightBackup.Data
         {
             get
             {
-                return FileManager.GetFileName(Path);
+                return FileUtility.GetFileName(Path);
             }
         }
 
@@ -39,7 +39,7 @@ namespace DeadByDaylightBackup.Data
         {
             get
             {
-                return FileManager.GetLastEditDate(Path);
+                return FileUtility.GetLastEditDate(Path);
             }
         }
     }

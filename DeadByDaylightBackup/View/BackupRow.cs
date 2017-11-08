@@ -78,7 +78,7 @@ namespace DeadByDaylightBackup.View
             DateLabel.SetValue(Grid.ColumnProperty, 2);
             SizeLabel = new Label
             {
-                Content = FileManager.GetReadableFileSize(Identity.FullFileName)
+                Content = FileUtility.GetReadableFileSize(Identity.FullFileName)
                ,
                 MaxHeight = IMaxHeight
             };

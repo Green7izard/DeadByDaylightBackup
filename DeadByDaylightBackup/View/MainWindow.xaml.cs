@@ -64,7 +64,7 @@ namespace DeadByDaylightBackup.View
             string txt = PathInput.Text.Trim();
             try
             {
-                filepathHandler.CreateFilePath(FileManager.GetFileWithExtension(txt, ".profjce"));
+                filepathHandler.CreateFilePath(FileUtility.GetFileWithExtension(txt, ".profjce"));
             }
             catch (Exception ex)
             {

@@ -1,6 +1,5 @@
 ﻿using DeadByDaylightBackup.Program;
 using DeadByDaylightBackup.Settings;
-using DeadByDaylightBackup.Utility;
 using DeadByDaylightBackup.View;
 using NLog;
 using System;
@@ -58,9 +57,11 @@ namespace DeadByDaylightBackup
             try
             {
                 //Manage dependencies
-                FileManager manager = new FileManager();
-                FilePathHandler filehandle = new FilePathHandler(manager, new FilePathSettingsManager(), LogManager.GetLogger("FileHandler"));
-                BackupHandler backuphandle = new BackupHandler(manager, new BackupSettingsManager(), LogManager.GetLogger("BackupHandler"));
+                // FileUtility manager = new FileManager();
+                FilePathHandler filehandle = new FilePathHandler(//manager,
+                    new FilePathSettingsManager(), LogManager.GetLogger("FileHandler"));
+                BackupHandler backuphandle = new BackupHandler(//manager,
+                    new BackupSettingsManager(), LogManager.GetLogger("BackupHandler"));
                 _window = new MainWindow(filehandle, backuphandle, LogManager.GetLogger("UserInterface"));
                 _window.ShowInTaskbar = true;
             }

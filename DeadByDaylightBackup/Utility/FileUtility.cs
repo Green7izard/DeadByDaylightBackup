@@ -8,9 +8,16 @@ using System.Threading.Tasks;
 
 namespace DeadByDaylightBackup.Utility
 {
-    public class FileManager
+    /// <summary>
+    /// Utility class for files
+    /// </summary>
+    public static class FileUtility
     {
-        internal void DeleteFile(string filepath)
+        /// <summary>
+        /// Delete a file
+        /// </summary>
+        /// <param name="filepath">file to delete</param>
+        internal static void DeleteFile(string filepath)
         {
             var path = Path.GetDirectoryName(filepath);
             File.Delete(filepath);
@@ -26,21 +33,42 @@ namespace DeadByDaylightBackup.Utility
             }
         }
 
+        /// <summary>
+        /// Get the last time the file was edited
+        /// </summary>
+        /// <param name="fullFilePath">The filename</param>
+        /// <returns>DateTime</returns>
         internal static DateTime GetLastEditDate(string fullFilePath)
         {
             return File.GetLastWriteTime(fullFilePath);
         }
 
+        /// <summary>
+        /// Get the name of a file
+        /// </summary>
+        /// <param name="fullFilePath">filepath of the file</param>
+        /// <returns>filename</returns>
         internal static string GetFileName(string fullFilePath)
         {
             return fullFilePath.Split('\\', '/').Last();
         }
 
+        /// <summary>
+        /// Check if file exits
+        /// </summary>
+        /// <param name="path">Path of the file</param>
+        /// <returns>true if it exists</returns>
         internal static bool FileExists(string path)
         {
             return File.Exists(path);
         }
 
+        /// <summary>
+        /// In a path, get the file with the specified extesion
+        /// </summary>
+        /// <param name="path">Path to search</param>
+        /// <param name="extension">desired extension</param>
+        /// <returns>Filepath</returns>
         internal static string GetFileWithExtension(string path, string extension)
         {
             path = path.Trim();
@@ -57,28 +85,50 @@ namespace DeadByDaylightBackup.Utility
             else { throw new IOException("Path not found: " + path); }
         }
 
+        /// <summary>
+        /// Combine multiple parts into one path
+        /// </summary>
+        /// <param name="pathParts">parts of the path</param>
+        /// <returns>combined path</returns>
         internal static string MergePaths(params string[] pathParts)
         {
             return Path.GetFullPath(string.Join("\\", pathParts.Select(x => x.Trim(' ', '\\', '/'))).Replace("\\\\", "\\"));
         }
 
-        internal static void WriteToFile(string settingsFilePath, string result)
+        /// <summary>
+        /// Write string data to a file
+        /// </summary>
+        /// <param name="filePath">the filepath where the data needs to go</param>
+        /// <param name="content">The content for the file</param>
+        internal static void WriteToFile(string filePath, string content)
         {
-            // var directory = Path.GetFullPath(settingsFilePath);
-            // Directory.CreateDirectory(directory);
-            File.WriteAllText(settingsFilePath, result, Encoding.UTF8);
+            File.WriteAllText(filePath, content, Encoding.UTF8);
         }
 
+        /// <summary>
+        /// Create the specified directory
+        /// </summary>
+        /// <param name="folder">the folder to create</param>
         internal static void CreateDirectory(string folder)
         {
             Directory.CreateDirectory(folder);
         }
 
+        /// <summary>
+        /// Get the size of a file
+        /// </summary>
+        /// <param name="fileName">the fileName</param>
+        /// <returns></returns>
         internal static long GetFileSize(string fileName)
         {
-            return new System.IO.FileInfo(fileName).Length;
+            return new FileInfo(fileName).Length;
         }
 
+        /// <summary>
+        /// Get the size of a file in readable style
+        /// </summary>
+        /// <param name="fileName">filepath</param>
+        /// <returns>Readable string like "2.96 KB"</returns>
         internal static string GetReadableFileSize(string fileName)
         {
             string[] sizes = { "B", "KB", "MB", "GB", "TB" };
@@ -93,11 +143,20 @@ namespace DeadByDaylightBackup.Utility
             return result;
         }
 
+        /// <summary>
+        /// Copy filepath to targetfile
+        /// </summary>
+        /// <param name="filepath">filepath of the desired file</param>
+        /// <param name="targetFile">filepath of the desired new location</param>
         internal static void Copy(string filepath, string targetFile)
         {
             File.Copy(filepath, targetFile, true);
         }
 
+        /// <summary>
+        /// Get a list of drives that can be searched
+        /// </summary>
+        /// <returns>Array of drives</returns>
         internal static string[] GetDrives()
         {
             System.IO.DriveInfo[] drives = System.IO.DriveInfo.GetDrives();
@@ -105,6 +164,12 @@ namespace DeadByDaylightBackup.Utility
                 .Where(x => Directory.Exists(x)).ToArray();
         }
 
+        /// <summary>
+        /// Search all drives for the specified folder name, and the searchtarget in it.
+        /// </summary>
+        /// <param name="foldername">Name of the folder, no wildcards</param>
+        /// <param name="searchTarget">desired file, wildcards allowed</param>
+        /// <returns>array of filepaths</returns>
         internal static string[] FullFileSearch(string foldername, string searchTarget)
         {
             var drives = GetDrives();
@@ -141,6 +206,13 @@ namespace DeadByDaylightBackup.Utility
             return files.ToArray();
         }
 
+        /// <summary>
+        /// Search for a specific directory
+        /// Recursive operation
+        /// </summary>
+        /// <param name="path">The path that needs to be searched for the folder</param>
+        /// <param name="directoryname">the foldername to find</param>
+        /// <returns>Collection of strings</returns>
         internal static ICollection<string> SearchForDirectory(string path, string directoryname)
         {
             var info = new DirectoryInfo(path);
@@ -174,11 +246,16 @@ namespace DeadByDaylightBackup.Utility
             return results;
         }
 
-        private static bool AccessableDirectory(string x)
+        /// <summary>
+        /// Check if its possible to acces (read/write) to a folder
+        /// </summary>
+        /// <param name="directory">the directory to search</param>
+        /// <returns>true if you can acces is</returns>
+        private static bool AccessableDirectory(string directory)
         {
-            if (IsDirectoryBlacklisted(x))
+            if (IsDirectoryBlacklisted(directory))
             { return false; }
-            else if (x.Count(y => y.Equals('\\')) > 10)
+            else if (directory.Count(y => y.Equals('\\')) > 10)
             {
                 return false;
             }
@@ -186,7 +263,7 @@ namespace DeadByDaylightBackup.Utility
             {
                 try
                 {
-                    var permission = new FileIOPermission(FileIOPermissionAccess.Write, x);
+                    var permission = new FileIOPermission(FileIOPermissionAccess.Write, directory);
                     permission.Demand();
                     return true;
                 }
@@ -197,6 +274,11 @@ namespace DeadByDaylightBackup.Utility
             }
         }
 
+        /// <summary>
+        /// Crude way to see if you may access a folder
+        /// </summary>
+        /// <param name="foldername">the folder to find</param>
+        /// <returns>true if its blacklisted, false if you may acces it</returns>
         private static bool IsDirectoryBlacklisted(string foldername)
         {
             var name = foldername.Split('/', '\\').Last().Trim();

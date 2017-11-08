@@ -14,14 +14,16 @@ namespace DeadByDaylightBackup.Program
         private readonly IDictionary<long, Backup> BackupStore = new Dictionary<long, Backup>();
         private readonly IList<IBackupFileTrigger> Triggerlist = new List<IBackupFileTrigger>(1);
 
-        private readonly FileManager _filemanager;
+        // private readonly FileUtility _filemanager;
         private readonly BackupSettingsManager _settingManager;
+
         private readonly Logger _logger;
 
-        public BackupHandler(FileManager filemanager, BackupSettingsManager settingManager, Logger logger)
+        public BackupHandler(//FileUtility filemanager,
+            BackupSettingsManager settingManager, Logger logger)
         {
             _settingManager = settingManager;
-            _filemanager = filemanager;
+            //_filemanager = filemanager;
             _logger = logger;
             long id = 0;
             foreach (var setting in _settingManager.GetSettings())
@@ -46,10 +48,10 @@ namespace DeadByDaylightBackup.Program
         {
             try
             {
-                string fileName = FileManager.GetFileName(filepath.Path);
-                string DateFolder = FileManager.MergePaths(_settingManager.GetBackupFileLocation(), filepath.LastEdited.SimpleShortFormat());
-                string Playerfolder = FileManager.MergePaths(DateFolder, filepath.UserCode);
-                string targetFile = FileManager.MergePaths(Playerfolder, FileManager.GetFileName(filepath.Path));
+                string fileName = FileUtility.GetFileName(filepath.Path);
+                string DateFolder = FileUtility.MergePaths(_settingManager.GetBackupFileLocation(), filepath.LastEdited.SimpleShortFormat());
+                string Playerfolder = FileUtility.MergePaths(DateFolder, filepath.UserCode);
+                string targetFile = FileUtility.MergePaths(Playerfolder, FileUtility.GetFileName(filepath.Path));
                 Backup backup = new Backup
                 {
                     FullFileName = targetFile,
@@ -69,9 +71,9 @@ namespace DeadByDaylightBackup.Program
                             if (!BackupStore.ContainsKey(i))
                             {
                                 backup.Id = i;
-                                FileManager.CreateDirectory(DateFolder);
-                                FileManager.CreateDirectory(Playerfolder);
-                                FileManager.Copy(filepath.Path, targetFile);
+                                FileUtility.CreateDirectory(DateFolder);
+                                FileUtility.CreateDirectory(Playerfolder);
+                                FileUtility.Copy(filepath.Path, targetFile);
                                 BackupStore.Add(i, backup);
                                 TriggerCreate(backup);
                                 _settingManager.SaveSettings(BackupStore.Values.ToArray());
@@ -101,7 +103,7 @@ namespace DeadByDaylightBackup.Program
                         BackupStore.Remove(id);
                         TriggerDelete(id);
                         _settingManager.SaveSettings(BackupStore.Values.ToArray());
-                        _filemanager.DeleteFile(backup.FullFileName);
+                        FileUtility.DeleteFile(backup.FullFileName);
                     }
                     else
                     {

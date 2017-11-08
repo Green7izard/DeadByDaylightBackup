@@ -92,7 +92,7 @@
     <Compile Include="Settings\FilePathSettingsManager.cs" />
     <Compile Include="Settings\ISettingsManager.cs" />
     <Compile Include="Utility\DateUtility.cs" />
-    <Compile Include="Utility\FileManager.cs" />
+    <Compile Include="Utility\FileUtility.cs" />
     <Compile Include="Settings\SettingsManager.cs" />
     <Compile Include="View\BackupRow.cs" />
     <Compile Include="View\FilePathRow.cs" />

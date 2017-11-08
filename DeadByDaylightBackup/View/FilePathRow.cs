@@ -53,7 +53,7 @@ namespace DeadByDaylightBackup.View
             UserCodeLabel.SetValue(Grid.ColumnProperty, 1);
             SizeLabel = new Label
             {
-                Content = FileManager.GetReadableFileSize(Identity.Path),
+                Content = FileUtility.GetReadableFileSize(Identity.Path),
                 MaxHeight = IMaxHeight
             };
             SizeLabel.SetValue(Grid.ColumnProperty, 2);

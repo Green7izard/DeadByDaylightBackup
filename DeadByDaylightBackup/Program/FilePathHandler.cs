@@ -14,19 +14,21 @@ namespace DeadByDaylightBackup.Program
         private readonly IDictionary<long, FilePath> BackupStore = new Dictionary<long, FilePath>();
         private readonly IList<IFilePathTrigger> Triggerlist = new List<IFilePathTrigger>(1);
 
-        private readonly FileManager _filemanager;
+        // private readonly FileUtility _filemanager;
         private readonly FilePathSettingsManager _settingManager;
+
         private readonly Logger _logger;
 
-        public FilePathHandler(FileManager filemanager, FilePathSettingsManager settingManager, Logger logger)
+        public FilePathHandler(//FileUtility filemanager,
+            FilePathSettingsManager settingManager, Logger logger)
         {
             _settingManager = settingManager;
-            _filemanager = filemanager;
+            //_filemanager = filemanager;
             _logger = logger;
             long id = 1;
             foreach (var setting in _settingManager.GetSettings())
             {
-                if (FileManager.FileExists(setting.Path))
+                if (FileUtility.FileExists(setting.Path))
                 {
                     setting.Id = id;
                     BackupStore.Add(id, setting);
@@ -49,7 +51,7 @@ namespace DeadByDaylightBackup.Program
         {
             try
             {
-                if (FileManager.FileExists(path))
+                if (FileUtility.FileExists(path))
                 {
                     var filePath = new FilePath
                     {
@@ -187,7 +189,7 @@ namespace DeadByDaylightBackup.Program
         {
             try
             {
-                var result = FileManager.FullFileSearch("381210", "*.profjce");
+                var result = FileUtility.FullFileSearch("381210", "*.profjce");
                 lock (BackupStore)
                 {
                     return result.Select(x => CreateFilePath(x)).ToArray();
@@ -207,7 +209,7 @@ namespace DeadByDaylightBackup.Program
                 lock (BackupStore)
                 {
                     FilePath path = BackupStore.Values.Single(x => x.UserCode == backup.UserCode);
-                    FileManager.Copy(backup.FullFileName, path.Path);
+                    FileUtility.Copy(backup.FullFileName, path.Path);
                 }
             }
             catch (Exception ex)

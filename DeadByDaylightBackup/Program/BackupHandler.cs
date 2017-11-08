@@ -1,9 +1,11 @@
-﻿using System;
+﻿using DeadByDaylightBackup.Data;
+using DeadByDaylightBackup.Interface;
+using DeadByDaylightBackup.Settings;
+using DeadByDaylightBackup.Utility;
+using NLog;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using DeadByDaylightBackup.Interface;
-using DeadByDaylightBackup.Data;
-using DeadByDaylightBackup.Utility;
 
 namespace DeadByDaylightBackup.Program
 {
@@ -14,10 +16,13 @@ namespace DeadByDaylightBackup.Program
 
         private readonly FileManager _filemanager;
         private readonly BackupSettingsManager _settingManager;
-        public BackupHandler(FileManager filemanager, BackupSettingsManager settingManager)
+        private readonly Logger _logger;
+
+        public BackupHandler(FileManager filemanager, BackupSettingsManager settingManager, Logger logger)
         {
             _settingManager = settingManager;
             _filemanager = filemanager;
+            _logger = logger;
             long id = 0;
             foreach (var setting in _settingManager.GetSettings())
             {
@@ -26,6 +31,7 @@ namespace DeadByDaylightBackup.Program
                 id++;
             }
         }
+
         public void Dispose()
         {
             lock (Triggerlist)
@@ -36,88 +42,116 @@ namespace DeadByDaylightBackup.Program
             }
         }
 
-
-
         public long CreateBackup(FilePath filepath)
         {
-            string fileName = FileManager.GetFileName(filepath.Path);
-            string DateFolder = FileManager.MergePaths(_settingManager.GetBackupFileLocation(), filepath.LastEdited.SimpleFormat());
-            string Playerfolder = FileManager.MergePaths(DateFolder, filepath.UserCode);
-            string targetFile = FileManager.MergePaths(Playerfolder, FileManager.GetFileName(filepath.Path));
-            Backup backup = new Backup
+            try
             {
-                FullFileName = targetFile,
-                Date = filepath.LastEdited,
-                UserCode = filepath.UserCode
-            };
-            lock(BackupStore)
-            {
-                if (BackupStore.Any(x => x.Value.FullFileName == backup.FullFileName))
+                string fileName = FileManager.GetFileName(filepath.Path);
+                string DateFolder = FileManager.MergePaths(_settingManager.GetBackupFileLocation(), filepath.LastEdited.SimpleShortFormat());
+                string Playerfolder = FileManager.MergePaths(DateFolder, filepath.UserCode);
+                string targetFile = FileManager.MergePaths(Playerfolder, FileManager.GetFileName(filepath.Path));
+                Backup backup = new Backup
                 {
-                    return BackupStore.First(x => x.Value.FullFileName == backup.FullFileName).Key;
-                }
-                else
+                    FullFileName = targetFile,
+                    Date = filepath.LastEdited,
+                    UserCode = filepath.UserCode
+                };
+                lock (BackupStore)
                 {
-                    for (long i = 0; i < long.MaxValue; i++)
+                    if (BackupStore.Any(x => x.Value.FullFileName == backup.FullFileName))
                     {
-                        if (!BackupStore.ContainsKey(i))
-                        {
-                            backup.Id = i;
-                            FileManager.CreateDirectory(DateFolder);
-                            FileManager.CreateDirectory(Playerfolder);
-                            FileManager.Copy(filepath.Path, targetFile);
-                            BackupStore.Add(i, backup);
-                            TriggerCreate(backup);
-                            _settingManager.SaveSettings(BackupStore.Values.ToArray());
-                            return i;
-                        }
+                        return BackupStore.First(x => x.Value.FullFileName == backup.FullFileName).Key;
                     }
-                    throw new ArgumentOutOfRangeException("No More room in long!");
+                    else
+                    {
+                        for (long i = 0; i < long.MaxValue; i++)
+                        {
+                            if (!BackupStore.ContainsKey(i))
+                            {
+                                backup.Id = i;
+                                FileManager.CreateDirectory(DateFolder);
+                                FileManager.CreateDirectory(Playerfolder);
+                                FileManager.Copy(filepath.Path, targetFile);
+                                BackupStore.Add(i, backup);
+                                TriggerCreate(backup);
+                                _settingManager.SaveSettings(BackupStore.Values.ToArray());
+                                return i;
+                            }
+                        }
+                        throw new ArgumentOutOfRangeException("No More room in long!");
+                    }
                 }
             }
-            
+            catch (Exception ex)
+            {
+                _logger.Fatal(ex, "Failed to backup '{0}' Because of {1}", filepath.Path, ex.Message);
+                throw;
+            }
         }
 
         public void DeleteBackup(long id)
         {
-            lock(BackupStore)
+            try
             {
-                if(BackupStore.ContainsKey(id))
+                lock (BackupStore)
                 {
-                    var backup = BackupStore[id];
-                    BackupStore.Remove(id);
-                    TriggerDelete(id);
-                    _settingManager.SaveSettings(BackupStore.Values.ToArray());
-                    _filemanager.DeleteFile(backup.FullFileName);
+                    if (BackupStore.ContainsKey(id))
+                    {
+                        var backup = BackupStore[id];
+                        BackupStore.Remove(id);
+                        TriggerDelete(id);
+                        _settingManager.SaveSettings(BackupStore.Values.ToArray());
+                        _filemanager.DeleteFile(backup.FullFileName);
+                    }
+                    else
+                    {
+                        throw new KeyNotFoundException("Unkown Backup id");
+                    }
                 }
-                else
-                {
-                    throw new KeyNotFoundException("Unkown Backup id");
-                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Failed to remove backup '{0}' Because of {1}", id, ex.Message);
+                throw;
             }
         }
 
-       
-
         public ICollection<Backup> GetBackups()
         {
-            lock(BackupStore)
-                return BackupStore.Select(x => x.Value).ToArray();
+            try
+            {
+                lock (BackupStore)
+                    return BackupStore.Select(x => x.Value).ToArray();
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn(ex, "Failed to retrieve backups because of {0}", ex.Message);
+                throw;
+            }
         }
 
         public void Register(IBackupFileTrigger trigger)
         {
-            lock(Triggerlist)
+            try
             {
-                if(Triggerlist.Contains(trigger))
+                lock (Triggerlist)
                 {
-                    throw new InvalidOperationException("Trigger already Registered");
-                }
-                else
-                {
-                    Triggerlist.Add(trigger);
+                    if (Triggerlist.Contains(trigger))
+                    {
+                        throw new InvalidOperationException("Trigger already Registered");
+                    }
+                    else
+                    {
+                        Triggerlist.Add(trigger);
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                _logger.Warn(ex, "Failed to register trigger because of {0}", ex.Message);
+                throw;
+            }
+
             foreach (var val in this.BackupStore.Values)
             {
                 trigger.AddBackupFile(val);
@@ -126,16 +160,20 @@ namespace DeadByDaylightBackup.Program
 
         private void TriggerCreate(Backup backup)
         {
-            lock(Triggerlist)
-                foreach(IBackupFileTrigger trigger in Triggerlist)
+            lock (Triggerlist)
+                foreach (IBackupFileTrigger trigger in Triggerlist)
                 {
                     try
                     {
                         trigger.AddBackupFile(backup);
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        _logger.Warn(ex, "{1} has caused an errror!", trigger.GetType());
+                    }
                 }
         }
+
         private void TriggerDelete(long id)
         {
             lock (Triggerlist)
@@ -145,7 +183,10 @@ namespace DeadByDaylightBackup.Program
                     {
                         trigger.RemoveBackupFile(id);
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        _logger.Warn(ex, "{1} has caused an errror!", trigger.GetType());
+                    }
                 }
         }
     }

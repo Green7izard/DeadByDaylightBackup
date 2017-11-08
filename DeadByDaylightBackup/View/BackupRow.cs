@@ -1,21 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using DeadByDaylightBackup.Data;
-using DeadByDaylightBackup.Interface;
+﻿using DeadByDaylightBackup.Data;
 using DeadByDaylightBackup.Utility;
-using DeadByDaylightBackup.View;
+using System.Windows.Controls;
+
 namespace DeadByDaylightBackup.View
 {
     public class BackUpRow : IdentifyableRowDefinition<Backup>
@@ -38,6 +24,12 @@ namespace DeadByDaylightBackup.View
             ; set;
         }
 
+        public Label SizeLabel
+        {
+            get
+            ; set;
+        }
+
         public Label PathLabel
         {
             get
@@ -49,7 +41,6 @@ namespace DeadByDaylightBackup.View
             get
             ; set;
         }
-
 
         public BackUpRow(Backup input) : base(input)
         {
@@ -64,13 +55,13 @@ namespace DeadByDaylightBackup.View
                 Content = "Delete",
                 MaxHeight = IMaxHeight
             };
-            DeleteRowButton.SetValue(Grid.ColumnProperty, 3);
+            DeleteRowButton.SetValue(Grid.ColumnProperty, 4);
             RestoreButton = new Button
             {
                 Content = "Restore",
                 MaxHeight = IMaxHeight
             };
-            RestoreButton.SetValue(Grid.ColumnProperty, 4);
+            RestoreButton.SetValue(Grid.ColumnProperty, 5);
             PathLabel = new Label
             {
                 Content = Identity.FileName
@@ -80,12 +71,18 @@ namespace DeadByDaylightBackup.View
             PathLabel.SetValue(Grid.ColumnProperty, 0);
             DateLabel = new Label
             {
-                Content = Identity.Date.GetValueOrDefault().ToString("dd-MM-yyyy hh:mm")
+                Content = Identity.Date.GetValueOrDefault().SimpleLongFormat()
                 ,
                 MaxHeight = IMaxHeight
             };
-
             DateLabel.SetValue(Grid.ColumnProperty, 2);
+            SizeLabel = new Label
+            {
+                Content = FileManager.GetReadableFileSize(Identity.FullFileName)
+               ,
+                MaxHeight = IMaxHeight
+            };
+            SizeLabel.SetValue(Grid.ColumnProperty, 3);
             MaxHeight = IMaxHeight;
         }
 
@@ -100,6 +97,7 @@ namespace DeadByDaylightBackup.View
             RestoreButton.SetValue(Grid.RowProperty, value);
             PathLabel.SetValue(Grid.RowProperty, value);
             UserCodeLabel.SetValue(Grid.RowProperty, value);
+            SizeLabel.SetValue(Grid.RowProperty, value);
         }
     }
 }

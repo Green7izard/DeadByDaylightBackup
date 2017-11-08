@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DeadByDaylightBackup.Utility;
+﻿using DeadByDaylightBackup.Utility;
+using System;
 
 namespace DeadByDaylightBackup.Data
 {
     [Serializable]
-    public class FilePath: Identifyable
+    public class FilePath : Identifyable
     {
-
-       public string Path { get; set; }
+        public string Path { get; set; }
 
         public string FileName
         {
@@ -27,9 +22,9 @@ namespace DeadByDaylightBackup.Data
             {
                 var st = Path.Split('\\');
                 bool found = false;
-                for (int i = st.Length-1;i>=0;i--)
+                for (int i = st.Length - 1; i >= 0; i--)
                 {
-                    if(found)
+                    if (found)
                     {
                         return st[i];
                     }

@@ -48,67 +48,91 @@ namespace DeadByDaylightBackup.Program
 
         public long CreateFilePath(string path)
         {
-            if (FileManager.FileExists(path))
+            try
             {
-                var filePath = new FilePath
+                if (FileManager.FileExists(path))
                 {
-                    Path = path
-                };
-                lock (BackupStore)
-                {
-                    if (BackupStore.Any(x => x.Value.Path.Equals(path, StringComparison.OrdinalIgnoreCase)))
+                    var filePath = new FilePath
                     {
-                        return BackupStore.First(x => x.Value.Path.Equals(path, StringComparison.OrdinalIgnoreCase)).Key;
-                    }
-                    else
-                        for (long i = 0; i < long.MaxValue; i++)
+                        Path = path
+                    };
+                    lock (BackupStore)
+                    {
+                        if (BackupStore.Any(x => x.Value.Path.Equals(path, StringComparison.OrdinalIgnoreCase)))
                         {
-                            if (!BackupStore.ContainsKey(i))
-                            {
-                                filePath.Id = i;
-                                BackupStore.Add(i, filePath);
-                                TriggerCreate(filePath);
-                                _settingManager.SaveSettings(BackupStore.Values.ToArray());
-                                return i;
-                            }
+                            return BackupStore.First(x => x.Value.Path.Equals(path, StringComparison.OrdinalIgnoreCase)).Key;
                         }
+                        else
+                            for (long i = 0; i < long.MaxValue; i++)
+                            {
+                                if (!BackupStore.ContainsKey(i))
+                                {
+                                    filePath.Id = i;
+                                    BackupStore.Add(i, filePath);
+                                    TriggerCreate(filePath);
+                                    _settingManager.SaveSettings(BackupStore.Values.ToArray());
+                                    return i;
+                                }
+                            }
 
+                    }
+                    throw new ArgumentOutOfRangeException("No More room in long!");
                 }
-                throw new ArgumentOutOfRangeException("No More room in long!");
+                else throw new KeyNotFoundException("Unkown File " + path);
             }
-            else throw new KeyNotFoundException("Unkown File " + path);
+            catch (Exception ex)
+            {
+                _logger.Fatal(ex, "Failed to add filepath '{0}' Because of {1}", path, ex.Message);
+                throw;
+            }
         }
 
         public void DeleteFilePath(long id)
         {
-            lock (BackupStore)
+            try
             {
-                if (BackupStore.ContainsKey(id))
+                lock (BackupStore)
                 {
-                    var backup = BackupStore[id];
-                    BackupStore.Remove(id);
-                    TriggerDelete(id);
-                    _settingManager.SaveSettings(BackupStore.Values.ToArray());
+                    if (BackupStore.ContainsKey(id))
+                    {
+                        var backup = BackupStore[id];
+                        BackupStore.Remove(id);
+                        TriggerDelete(id);
+                        _settingManager.SaveSettings(BackupStore.Values.ToArray());
+                    }
+                    else
+                    {
+                        throw new KeyNotFoundException("Unkown Backup id");
+                    }
                 }
-                else
-                {
-                    throw new KeyNotFoundException("Unkown Backup id");
-                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal(ex, "Failed to remove filepath '{0}' Because of {1}", id, ex.Message);
+                throw;
             }
         }
 
         public void Register(IFilePathTrigger trigger)
         {
-            lock (Triggerlist)
+            try
             {
-                if (Triggerlist.Contains(trigger))
+                lock (Triggerlist)
                 {
-                    throw new InvalidOperationException("Trigger already Registered");
+                    if (Triggerlist.Contains(trigger))
+                    {
+                        throw new InvalidOperationException("Trigger already Registered");
+                    }
+                    else
+                    {
+                        Triggerlist.Add(trigger);
+                    }
                 }
-                else
-                {
-                    Triggerlist.Add(trigger);
-                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal(ex, "Failed to register trigger  Because of {0}", ex.Message);
+                throw;
             }
             foreach (var val in this.BackupStore.Values)
             {
@@ -150,24 +174,47 @@ namespace DeadByDaylightBackup.Program
 
         public FilePath[] GetAllFilePaths()
         {
-            return BackupStore.Values.ToArray();
+            try
+            {
+                return BackupStore.Values.ToArray();
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal(ex, "Failed to get filepaths because of {0}", ex.Message);
+                throw;
+            }
         }
 
         public long[] SearchFilePaths()
         {
-            var result = FileManager.FullFileSearch("381210", "*.profjce");
-            lock (BackupStore)
+            try
             {
-                return result.Select(x => CreateFilePath(x)).ToArray();
+                var result = FileManager.FullFileSearch("381210", "*.profjce");
+                lock (BackupStore)
+                {
+                    return result.Select(x => CreateFilePath(x)).ToArray();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal(ex, "Failed to search for filepaths because of {0}", ex.Message);
+                throw;
             }
         }
 
         public void RestoreBackup(Backup backup)
         {
+            try { 
             lock (BackupStore)
             {
                 FilePath path = BackupStore.Values.Single(x => x.UserCode == backup.UserCode);
                 FileManager.Copy(backup.FullFileName, path.Path);
+            }
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal(ex, "Failed to get Restore backup '{0}' because of {1}",backup.FullFileName, ex.Message);
+                throw;
             }
         }
     }

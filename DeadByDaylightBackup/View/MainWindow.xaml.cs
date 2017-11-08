@@ -193,6 +193,7 @@ namespace DeadByDaylightBackup.View
                         FoldersGrid.Children.Add(rowDefinition.UserCodeLabel);
                         FoldersGrid.Children.Add(rowDefinition.DeleteRowButton);
                         FoldersGrid.Children.Add(rowDefinition.SizeLabel);
+                        FoldersGrid.Children.Add(rowDefinition.DateLabel);
                         UpdateFilePaths();
                     }
                 }
@@ -218,6 +219,7 @@ namespace DeadByDaylightBackup.View
                         FoldersGrid.Children.Remove(row.PathLabel);
                         FoldersGrid.Children.Remove(row.UserCodeLabel);
                         FoldersGrid.Children.Remove(row.SizeLabel);
+                        FoldersGrid.Children.Remove(row.DateLabel);
                         FoldersGrid.RowDefinitions.RemoveAt(rowNumber);
                         fileRows.Remove(row);
                         UpdateFilePaths();

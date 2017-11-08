@@ -8,7 +8,7 @@
         Title="DeadByDayLightBackupTool" Height="600" Width="1200
         ">
     <Grid>
-        <Grid x:Name="BackUpGrid" HorizontalAlignment="Left" Height="400" Margin="498,164,0,0" VerticalAlignment="Top" Width="692" Background="#FFCFCFCF">
+        <Grid x:Name="BackUpGrid" HorizontalAlignment="Left" Height="400" Margin="547,164,0,0" VerticalAlignment="Top" Width="643" Background="#FFCFCFCF">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*" />
                 <ColumnDefinition Width="2*" />
@@ -33,8 +33,9 @@
             <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="5" Foreground="Green"
           Height="31" VerticalAlignment="Top" HorizontalAlignment="Center">Restore</Label>
         </Grid>
-        <Grid x:Name="FoldersGrid" HorizontalAlignment="Left" Height="398" Margin="10,164,0,0" VerticalAlignment="Top" Width="422" Background="#FFCFCFCF">
+        <Grid x:Name="FoldersGrid" HorizontalAlignment="Left" Height="398" Margin="10,164,0,0" VerticalAlignment="Top" Width="506" Background="#FFCFCFCF">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*" />
                 <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="1*" />
@@ -48,14 +49,16 @@
             <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="1" Foreground="Green"
         Height="31" VerticalAlignment="Top" HorizontalAlignment="Center">UserCode</Label>
             <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="2" Foreground="Green"
-        Height="31" VerticalAlignment="Top" HorizontalAlignment="Center">Size</Label>
+        Height="31" VerticalAlignment="Top" HorizontalAlignment="Center">Date</Label>
             <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="3" Foreground="Green"
+        Height="31" VerticalAlignment="Top" HorizontalAlignment="Center">Size</Label>
+            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="4" Foreground="Green"
         Height="31" VerticalAlignment="Top" HorizontalAlignment="Center">Delete</Label>
         </Grid>
         <TextBox x:Name="PathInput" HorizontalAlignment="Left" Height="21" Margin="10,82,0,0" TextWrapping="Wrap" Text="SteamSaveLocation" VerticalAlignment="Top" Width="335" RenderTransformOrigin="1.463,5.993" />
         <Label x:Name="label" Content="FilePaths" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Width="99" />
         <Button x:Name="AddPathButton" Content="AddPath" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="21" Margin="368,81,0,0" VerticalAlignment="Top" Width="64" />
         <Button x:Name="SearchPathsButton" Content="Search For Steam paths" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="19" Margin="10,120,0,0" VerticalAlignment="Top" Width="422" />
-        <Button x:Name="BackupNowButton" HorizontalContentAlignment="Center" Content="Back-Up" HorizontalAlignment="Left" Height="62" Margin="498,77,0,0" VerticalAlignment="Top" Width="317" />
+        <Button x:Name="BackupNowButton" HorizontalContentAlignment="Center" Content="Back-Up" HorizontalAlignment="Left" Height="62" Margin="547,84,0,0" VerticalAlignment="Top" Width="317" />
     </Grid>
 </Window>

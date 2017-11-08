@@ -9,6 +9,7 @@ using DeadByDaylightBackup.Utility;
 using DeadByDaylightBackup.Program;
 using DeadByDaylightBackup.View;
 using NLog;
+using DeadByDaylightBackup.Settings;
 
 namespace DeadByDaylightBackup
 {

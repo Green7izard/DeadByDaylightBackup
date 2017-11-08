@@ -20,17 +20,17 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="31 " />
             </Grid.RowDefinitions>
-            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="0" Foreground="Green"  
+            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="0" Foreground="Green"
           Height="31" VerticalAlignment="Top" HorizontalAlignment="Center">FileName</Label>
-            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="1" Foreground="Green"  
+            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="1" Foreground="Green"
           Height="31" VerticalAlignment="Top" HorizontalAlignment="Center">UserCode</Label>
-            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="2" Foreground="Green"  
+            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="2" Foreground="Green"
          Height="31" VerticalAlignment="Top" HorizontalAlignment="Center">Date</Label>
-            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="3" Foreground="Green"  
+            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="3" Foreground="Green"
           Height="31" VerticalAlignment="Top" HorizontalAlignment="Center">Size</Label>
-            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="4" Foreground="Green"  
+            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="4" Foreground="Green"
           Height="31" VerticalAlignment="Top" HorizontalAlignment="Center">Delete</Label>
-            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="5" Foreground="Green"  
+            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="5" Foreground="Green"
           Height="31" VerticalAlignment="Top" HorizontalAlignment="Center">Restore</Label>
         </Grid>
         <Grid x:Name="FoldersGrid" HorizontalAlignment="Left" Height="398" Margin="10,164,0,0" VerticalAlignment="Top" Width="422" Background="#FFCFCFCF">
@@ -43,20 +43,19 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="60" />
             </Grid.RowDefinitions>
-            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="0" Foreground="Green"  
+            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="0" Foreground="Green"
         Height="31" VerticalAlignment="Top" HorizontalAlignment="Center">FileName</Label>
-            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="1" Foreground="Green"  
+            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="1" Foreground="Green"
         Height="31" VerticalAlignment="Top" HorizontalAlignment="Center">UserCode</Label>
-            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="2" Foreground="Green"  
+            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="2" Foreground="Green"
         Height="31" VerticalAlignment="Top" HorizontalAlignment="Center">Size</Label>
-            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="3" Foreground="Green"  
+            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="3" Foreground="Green"
         Height="31" VerticalAlignment="Top" HorizontalAlignment="Center">Delete</Label>
         </Grid>
-        <TextBox x:Name="PathInput" HorizontalAlignment="Left" Height="21" Margin="10,82,0,0" TextWrapping="Wrap" Text="SteamSaveLocation" VerticalAlignment="Top" Width="335" RenderTransformOrigin="1.463,5.993"/>
-        <Label x:Name="label" Content="FilePaths" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Width="99"/>
-        <Button x:Name="AddPathButton" Content="AddPath" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="21" Margin="368,81,0,0" VerticalAlignment="Top" Width="64"/>
-        <Button x:Name="SearchPathsButton" Content="Search For Steam paths" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="19" Margin="10,120,0,0" VerticalAlignment="Top" Width="422"/>
-        <Button x:Name="BackupNowButton" HorizontalContentAlignment="Center" Content="Back-Up" HorizontalAlignment="Left" Height="62" Margin="498,77,0,0" VerticalAlignment="Top" Width="317"/>
+        <TextBox x:Name="PathInput" HorizontalAlignment="Left" Height="21" Margin="10,82,0,0" TextWrapping="Wrap" Text="SteamSaveLocation" VerticalAlignment="Top" Width="335" RenderTransformOrigin="1.463,5.993" />
+        <Label x:Name="label" Content="FilePaths" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Width="99" />
+        <Button x:Name="AddPathButton" Content="AddPath" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="21" Margin="368,81,0,0" VerticalAlignment="Top" Width="64" />
+        <Button x:Name="SearchPathsButton" Content="Search For Steam paths" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="19" Margin="10,120,0,0" VerticalAlignment="Top" Width="422" />
+        <Button x:Name="BackupNowButton" HorizontalContentAlignment="Center" Content="Back-Up" HorizontalAlignment="Left" Height="62" Margin="498,77,0,0" VerticalAlignment="Top" Width="317" />
     </Grid>
-
 </Window>

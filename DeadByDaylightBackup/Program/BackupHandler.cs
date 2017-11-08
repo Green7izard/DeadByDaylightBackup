@@ -5,6 +5,7 @@ using DeadByDaylightBackup.Interface;
 using DeadByDaylightBackup.Data;
 using DeadByDaylightBackup.Utility;
 using NLog;
+using DeadByDaylightBackup.Settings;
 
 namespace DeadByDaylightBackup.Program
 {

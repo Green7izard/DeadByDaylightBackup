@@ -7,6 +7,7 @@ using DeadByDaylightBackup.Interface;
 using DeadByDaylightBackup.Data;
 using DeadByDaylightBackup.Utility;
 using NLog;
+using DeadByDaylightBackup.Settings;
 
 namespace DeadByDaylightBackup.Program
 {
@@ -154,7 +155,7 @@ namespace DeadByDaylightBackup.Program
 
         public long[] SearchFilePaths()
         {
-            var result = FileManager.FullFileSearch("381210", "*.profjce", (o) => CreateFilePath(o));
+            var result = FileManager.FullFileSearch("381210", "*.profjce");
             lock (BackupStore)
             {
                 return result.Select(x => CreateFilePath(x)).ToArray();

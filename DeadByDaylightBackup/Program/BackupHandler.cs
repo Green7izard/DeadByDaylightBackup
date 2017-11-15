@@ -194,7 +194,21 @@ namespace DeadByDaylightBackup.Program
 
         public void CleanupOldBackups()
         {
-            throw new NotImplementedException();
+            lock (BackupStore)
+            {
+                var backupGroups = BackupStore.Values.GroupBy(x => x.UserCode);
+                List<long> goodBackups = new List<long>(BackupStore.Count());
+                foreach (var group in backupGroups)
+                {
+                    var safeIds = group.OrderByDescending(x => x.Date).Take(10).Select(x => x.Id).ToArray();
+                    goodBackups.AddRange(safeIds);
+                }
+                var badBackups = BackupStore.Keys.Where(x => !goodBackups.Contains(x)).ToArray();
+                foreach (var id in badBackups)
+                {
+                    DeleteBackup(id);
+                }
+            }
         }
     }
 }

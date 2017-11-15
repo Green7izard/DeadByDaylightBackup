@@ -191,5 +191,10 @@ namespace DeadByDaylightBackup.Program
                     }
                 }
         }
+
+        public void CleanupOldBackups()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

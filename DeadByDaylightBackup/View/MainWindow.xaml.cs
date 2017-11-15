@@ -39,11 +39,26 @@ namespace DeadByDaylightBackup.View
             AddPathButton.Click += (o, i) => AddPathClick(o, i);
             BackupNowButton.Click += (o, i) => BackUpAll(o, i);
             SearchPathsButton.Click += (o, i) => SearchPaths(o, i);
+            CleanupBackupsButton.Click += (o, i) => CleanupOldBackups(o, i);
         }
 
         #endregion privates
 
         #region buttonHandlers
+
+        private void CleanupOldBackups(object o, RoutedEventArgs i)
+        {
+            CleanupBackupsButton.IsEnabled = false;
+            try
+            {
+                backupHandler.CleanupOldBackups();
+            }
+            catch (Exception ex)
+            {
+                ShowPopup("Cleanup failed!", ex);
+            }
+            CleanupBackupsButton.IsEnabled = true;
+        }
 
         private void SearchPaths(object o, RoutedEventArgs i)
         {

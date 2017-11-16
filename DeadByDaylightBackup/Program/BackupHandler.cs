@@ -13,15 +13,17 @@ namespace DeadByDaylightBackup.Program
     {
         private readonly IDictionary<long, Backup> BackupStore = new Dictionary<long, Backup>();
         private readonly IList<IBackupFileTrigger> Triggerlist = new List<IBackupFileTrigger>(1);
+        private readonly int _numberOfSavesTokeep;
 
         // private readonly FileUtility _filemanager;
         private readonly BackupSettingsManager _settingManager;
 
         private readonly Logger _logger;
 
-        public BackupHandler(//FileUtility filemanager,
+        public BackupHandler(int numberOfSaves, //FileUtility filemanager,
             BackupSettingsManager settingManager, Logger logger)
         {
+            _numberOfSavesTokeep = numberOfSaves;
             _settingManager = settingManager;
             //_filemanager = filemanager;
             _logger = logger;
@@ -194,20 +196,25 @@ namespace DeadByDaylightBackup.Program
 
         public void CleanupOldBackups()
         {
-            lock (BackupStore)
+            try
             {
-                var backupGroups = BackupStore.Values.GroupBy(x => x.UserCode);
-                List<long> goodBackups = new List<long>(BackupStore.Count());
-                foreach (var group in backupGroups)
+                lock (BackupStore)
                 {
-                    var safeIds = group.OrderByDescending(x => x.Date).Take(10).Select(x => x.Id).ToArray();
-                    goodBackups.AddRange(safeIds);
+                    var backupGroups = BackupStore.Values.GroupBy(x => x.UserCode);
+                    foreach (var group in backupGroups)
+                    {
+                        var safeIds = group.OrderByDescending(x => x.Date).Skip(_numberOfSavesTokeep).Select(x => x.Id).ToArray();
+                        foreach (var id in safeIds)
+                        {
+                            DeleteBackup(id);
+                        }
+                    }
                 }
-                var badBackups = BackupStore.Keys.Where(x => !goodBackups.Contains(x)).ToArray();
-                foreach (var id in badBackups)
-                {
-                    DeleteBackup(id);
-                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn(ex, "Failed to delete old backups!");
+                throw;
             }
         }
     }

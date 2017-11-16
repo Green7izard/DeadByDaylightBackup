@@ -3,6 +3,7 @@ using DeadByDaylightBackup.Settings;
 using DeadByDaylightBackup.View;
 using NLog;
 using System;
+using System.Configuration;
 using System.Windows;
 
 namespace DeadByDaylightBackup
@@ -56,11 +57,13 @@ namespace DeadByDaylightBackup
         {
             try
             {
+                int savesToKeep = int.Parse(ConfigurationManager.AppSettings["SavesToKeep"]);
+
                 //Manage dependencies
                 // FileUtility manager = new FileManager();
                 FilePathHandler filehandle = new FilePathHandler(//manager,
                     new FilePathSettingsManager(), LogManager.GetLogger("FileHandler"));
-                BackupHandler backuphandle = new BackupHandler(//manager,
+                BackupHandler backuphandle = new BackupHandler(savesToKeep,//manager,
                     new BackupSettingsManager(), LogManager.GetLogger("BackupHandler"));
                 _window = new MainWindow(filehandle, backuphandle, LogManager.GetLogger("UserInterface"));
                 _window.ShowInTaskbar = true;

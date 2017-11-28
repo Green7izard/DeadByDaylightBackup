@@ -1,11 +1,14 @@
 ﻿using DeadByDaylightBackup.Data;
 using DeadByDaylightBackup.Utility;
+using System.IO;
 using System.Windows.Controls;
 
 namespace DeadByDaylightBackup.View
 {
     public class FilePathRow : IdentifyableRowDefinition<FilePath>
     {
+        private FileSystemWatcher watcher;
+
         public Button DeleteRowButton
         {
             get;
@@ -24,6 +27,12 @@ namespace DeadByDaylightBackup.View
             ; set;
         }
 
+        public Label DateLabel
+        {
+            get
+            ; set;
+        }
+
         public Label UserCodeLabel
         {
             get
@@ -37,7 +46,7 @@ namespace DeadByDaylightBackup.View
                 Content = "Delete",
                 MaxHeight = IMaxHeight
             };
-            DeleteRowButton.SetValue(Grid.ColumnProperty, 3);
+            DeleteRowButton.SetValue(Grid.ColumnProperty, 4);
             PathLabel = new Label
             {
                 Content = Identity.FileName
@@ -53,15 +62,38 @@ namespace DeadByDaylightBackup.View
             UserCodeLabel.SetValue(Grid.ColumnProperty, 1);
             SizeLabel = new Label
             {
-                Content = FileManager.GetReadableFileSize(Identity.Path),
+                Content = FileUtility.GetReadableFileSize(Identity.Path),
                 MaxHeight = IMaxHeight
             };
-            SizeLabel.SetValue(Grid.ColumnProperty, 2);
+            SizeLabel.SetValue(Grid.ColumnProperty, 3);
+            DateLabel = new Label
+            {
+                Content = FileUtility.GetLastEditDate(Identity.Path).SimpleLongFormat(),
+                MaxHeight = IMaxHeight
+            };
+            DateLabel.SetValue(Grid.ColumnProperty, 2);
             MaxHeight = IMaxHeight;
+            string path = Path.GetDirectoryName(Identity.Path);
+            watcher = new FileSystemWatcher(path, Identity.FileName);
+            watcher.Changed += (o, i) =>
+            {
+                if (FileUtility.FileExists(Identity.Path))
+                    Refresh();
+            };
+        }
+
+        /// <summary>
+        /// Refresh information
+        /// </summary>
+        public void Refresh()
+        {
+            SizeLabel.Content = FileUtility.GetReadableFileSize(Identity.Path);
+            DateLabel.Content = FileUtility.GetLastEditDate(Identity.Path).SimpleLongFormat();
         }
 
         protected override void Dispose(bool final)
         {
+            watcher.Dispose();
         }
 
         protected override void SetRow(int value)
@@ -70,6 +102,7 @@ namespace DeadByDaylightBackup.View
             PathLabel.SetValue(Grid.RowProperty, value);
             UserCodeLabel.SetValue(Grid.RowProperty, value);
             SizeLabel.SetValue(Grid.RowProperty, value);
+            DateLabel.SetValue(Grid.RowProperty, value);
         }
     }
 }

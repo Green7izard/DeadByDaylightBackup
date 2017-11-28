@@ -1,32 +1,34 @@
 ﻿using DeadByDaylightBackup.Data;
 using DeadByDaylightBackup.Interface;
+using DeadByDaylightBackup.Logging;
 using DeadByDaylightBackup.Settings;
 using DeadByDaylightBackup.Utility;
-using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace DeadByDaylightBackup.Program
 {
-    internal class FilePathHandler : IFilePathHandler
+    public class FilePathHandler : IFilePathHandler
     {
         private readonly IDictionary<long, FilePath> BackupStore = new Dictionary<long, FilePath>();
         private readonly IList<IFilePathTrigger> Triggerlist = new List<IFilePathTrigger>(1);
 
-        private readonly FileManager _filemanager;
+        // private readonly FileUtility _filemanager;
         private readonly FilePathSettingsManager _settingManager;
-        private readonly Logger _logger;
 
-        public FilePathHandler(FileManager filemanager, FilePathSettingsManager settingManager, Logger logger)
+        private readonly ILogger _logger;
+
+        public FilePathHandler(//FileUtility filemanager,
+            FilePathSettingsManager settingManager, ILogger logger)
         {
             _settingManager = settingManager;
-            _filemanager = filemanager;
+            //_filemanager = filemanager;
             _logger = logger;
             long id = 1;
             foreach (var setting in _settingManager.GetSettings())
             {
-                if (FileManager.FileExists(setting.Path))
+                if (FileUtility.FileExists(setting.Path))
                 {
                     setting.Id = id;
                     BackupStore.Add(id, setting);
@@ -49,7 +51,7 @@ namespace DeadByDaylightBackup.Program
         {
             try
             {
-                if (FileManager.FileExists(path))
+                if (FileUtility.FileExists(path))
                 {
                     var filePath = new FilePath
                     {
@@ -80,7 +82,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Fatal(ex, "Failed to add filepath '{0}' Because of {1}", path, ex.Message);
+                _logger.Log(LogLevel.Fatal, ex, "Failed to add filepath '{0}' Because of {1}", path, ex.Message);
                 throw;
             }
         }
@@ -106,7 +108,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "Failed to remove filepath '{0}' Because of {1}", id, ex.Message);
+                _logger.Log(LogLevel.Error, ex, "Failed to remove filepath '{0}' Because of {1}", id, ex.Message);
                 throw;
             }
         }
@@ -129,7 +131,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Warn(ex, "Failed to register trigger  Because of {0}", ex.Message);
+                _logger.Log(LogLevel.Warn, ex, "Failed to register trigger  Because of {0}", ex.Message);
                 throw;
             }
             foreach (var val in this.BackupStore.Values)
@@ -149,7 +151,7 @@ namespace DeadByDaylightBackup.Program
                     }
                     catch (Exception ex)
                     {
-                        _logger.Warn(ex, "{1} has caused an errror!", trigger.GetType());
+                        _logger.Log(LogLevel.Warn, ex, "{1} has caused an errror!", trigger.GetType());
                     }
                 }
         }
@@ -165,7 +167,7 @@ namespace DeadByDaylightBackup.Program
                     }
                     catch (Exception ex)
                     {
-                        _logger.Warn(ex, "{1} has caused an errror!", trigger.GetType());
+                        _logger.Log(LogLevel.Warn, ex, "{1} has caused an errror!", trigger.GetType());
                     }
                 }
         }
@@ -178,7 +180,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "Failed to get filepaths because of {0}", ex.Message);
+                _logger.Log(LogLevel.Warn, ex, "Failed to get filepaths because of {0}", ex.Message);
                 throw;
             }
         }
@@ -187,7 +189,7 @@ namespace DeadByDaylightBackup.Program
         {
             try
             {
-                var result = FileManager.FullFileSearch("381210", "*.profjce");
+                var result = FileUtility.FullFileSearch("381210", "*.profjce");
                 lock (BackupStore)
                 {
                     return result.Select(x => CreateFilePath(x)).ToArray();
@@ -195,7 +197,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Warn(ex, "Failed to search for filepaths because of {0}", ex.Message);
+                _logger.Log(LogLevel.Warn, ex, "Failed to search for filepaths because of {0}", ex.Message);
                 throw;
             }
         }
@@ -207,12 +209,12 @@ namespace DeadByDaylightBackup.Program
                 lock (BackupStore)
                 {
                     FilePath path = BackupStore.Values.Single(x => x.UserCode == backup.UserCode);
-                    FileManager.Copy(backup.FullFileName, path.Path);
+                    FileUtility.Copy(backup.FullFileName, path.Path);
                 }
             }
             catch (Exception ex)
             {
-                _logger.Fatal(ex, "Failed to get Restore backup '{0}' because of {1}", backup.FullFileName, ex.Message);
+                _logger.Log(LogLevel.Fatal, ex, "Failed to get Restore backup '{0}' because of {1}", backup.FullFileName, ex.Message);
                 throw;
             }
         }

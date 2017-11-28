@@ -1,7 +1,7 @@
 ﻿using DeadByDaylightBackup.Data;
 using DeadByDaylightBackup.Interface;
 using DeadByDaylightBackup.Utility;
-using NLog;
+using DeadByDaylightBackup.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,9 +22,9 @@ namespace DeadByDaylightBackup.View
         private ICollection<FilePathRow> fileRows;
         private ICollection<BackUpRow> backupRows;
 
-        private readonly Logger _logger;
+        private readonly ILogger _logger;
 
-        public MainWindow(IFilePathHandler fileHandler, IBackupHandler backupHand, Logger logger) : base()
+        public MainWindow(IFilePathHandler fileHandler, IBackupHandler backupHand, Logging.ILogger logger) : base()
         {
             _logger = logger;
             fileRows = new List<FilePathRow>(2);
@@ -39,11 +39,26 @@ namespace DeadByDaylightBackup.View
             AddPathButton.Click += (o, i) => AddPathClick(o, i);
             BackupNowButton.Click += (o, i) => BackUpAll(o, i);
             SearchPathsButton.Click += (o, i) => SearchPaths(o, i);
+            CleanupBackupsButton.Click += (o, i) => CleanupOldBackups(o, i);
         }
 
         #endregion privates
 
         #region buttonHandlers
+
+        private void CleanupOldBackups(object o, RoutedEventArgs i)
+        {
+            CleanupBackupsButton.IsEnabled = false;
+            try
+            {
+                backupHandler.CleanupOldBackups();
+            }
+            catch (Exception ex)
+            {
+                ShowPopup("Cleanup failed!", ex);
+            }
+            CleanupBackupsButton.IsEnabled = true;
+        }
 
         private void SearchPaths(object o, RoutedEventArgs i)
         {
@@ -64,7 +79,7 @@ namespace DeadByDaylightBackup.View
             string txt = PathInput.Text.Trim();
             try
             {
-                filepathHandler.CreateFilePath(FileManager.GetFileWithExtension(txt, ".profjce"));
+                filepathHandler.CreateFilePath(FileUtility.GetFileWithExtension(txt, ".profjce"));
             }
             catch (Exception ex)
             {
@@ -193,6 +208,7 @@ namespace DeadByDaylightBackup.View
                         FoldersGrid.Children.Add(rowDefinition.UserCodeLabel);
                         FoldersGrid.Children.Add(rowDefinition.DeleteRowButton);
                         FoldersGrid.Children.Add(rowDefinition.SizeLabel);
+                        FoldersGrid.Children.Add(rowDefinition.DateLabel);
                         UpdateFilePaths();
                     }
                 }
@@ -200,7 +216,7 @@ namespace DeadByDaylightBackup.View
             catch (Exception ex)
             {
                 ShowPopup($"Failed to add Filepath '{path.FileName}'!", ex);
-                _logger.Warn(ex, "Failed to add FilePath '{0}'! Reason: {1}", path.Path, ex.Message);
+                _logger.Log(LogLevel.Warn, ex, "Failed to add FilePath '{0}'! Reason: {1}", path.Path, ex.Message);
             }
         }
 
@@ -218,6 +234,7 @@ namespace DeadByDaylightBackup.View
                         FoldersGrid.Children.Remove(row.PathLabel);
                         FoldersGrid.Children.Remove(row.UserCodeLabel);
                         FoldersGrid.Children.Remove(row.SizeLabel);
+                        FoldersGrid.Children.Remove(row.DateLabel);
                         FoldersGrid.RowDefinitions.RemoveAt(rowNumber);
                         fileRows.Remove(row);
                         UpdateFilePaths();
@@ -300,7 +317,7 @@ namespace DeadByDaylightBackup.View
             }
             catch (Exception exception)
             {
-                _logger.Fatal(exception, "Failed to show popup for exception! Message was {0}", message);
+                _logger.Log(LogLevel.Fatal, exception, "Failed to show popup for exception! Message was {0}", message);
             }
         }
 

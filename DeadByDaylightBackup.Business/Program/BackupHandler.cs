@@ -1,8 +1,8 @@
 ﻿using DeadByDaylightBackup.Data;
 using DeadByDaylightBackup.Interface;
+using DeadByDaylightBackup.Logging;
 using DeadByDaylightBackup.Settings;
 using DeadByDaylightBackup.Utility;
-using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,15 +13,19 @@ namespace DeadByDaylightBackup.Program
     {
         private readonly IDictionary<long, Backup> BackupStore = new Dictionary<long, Backup>();
         private readonly IList<IBackupFileTrigger> Triggerlist = new List<IBackupFileTrigger>(1);
+        private readonly int _numberOfSavesTokeep;
 
-        private readonly FileManager _filemanager;
+        // private readonly FileUtility _filemanager;
         private readonly BackupSettingsManager _settingManager;
-        private readonly Logger _logger;
 
-        public BackupHandler(FileManager filemanager, BackupSettingsManager settingManager, Logger logger)
+        private readonly ILogger _logger;
+
+        public BackupHandler(int numberOfSaves, //FileUtility filemanager,
+            BackupSettingsManager settingManager, ILogger logger)
         {
+            _numberOfSavesTokeep = numberOfSaves;
             _settingManager = settingManager;
-            _filemanager = filemanager;
+            //_filemanager = filemanager;
             _logger = logger;
             long id = 0;
             foreach (var setting in _settingManager.GetSettings())
@@ -46,10 +50,10 @@ namespace DeadByDaylightBackup.Program
         {
             try
             {
-                string fileName = FileManager.GetFileName(filepath.Path);
-                string DateFolder = FileManager.MergePaths(_settingManager.GetBackupFileLocation(), filepath.LastEdited.SimpleShortFormat());
-                string Playerfolder = FileManager.MergePaths(DateFolder, filepath.UserCode);
-                string targetFile = FileManager.MergePaths(Playerfolder, FileManager.GetFileName(filepath.Path));
+                string fileName = FileUtility.GetFileName(filepath.Path);
+                string DateFolder = FileUtility.MergePaths(_settingManager.GetBackupFileLocation(), filepath.LastEdited.SimpleShortFormat());
+                string Playerfolder = FileUtility.MergePaths(DateFolder, filepath.UserCode);
+                string targetFile = FileUtility.MergePaths(Playerfolder, FileUtility.GetFileName(filepath.Path));
                 Backup backup = new Backup
                 {
                     FullFileName = targetFile,
@@ -69,9 +73,9 @@ namespace DeadByDaylightBackup.Program
                             if (!BackupStore.ContainsKey(i))
                             {
                                 backup.Id = i;
-                                FileManager.CreateDirectory(DateFolder);
-                                FileManager.CreateDirectory(Playerfolder);
-                                FileManager.Copy(filepath.Path, targetFile);
+                                FileUtility.CreateDirectory(DateFolder);
+                                FileUtility.CreateDirectory(Playerfolder);
+                                FileUtility.Copy(filepath.Path, targetFile);
                                 BackupStore.Add(i, backup);
                                 TriggerCreate(backup);
                                 _settingManager.SaveSettings(BackupStore.Values.ToArray());
@@ -84,7 +88,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Fatal(ex, "Failed to backup '{0}' Because of {1}", filepath.Path, ex.Message);
+                _logger.Log(LogLevel.Fatal,ex, "Failed to backup '{0}' Because of {1}", filepath.Path, ex.Message);
                 throw;
             }
         }
@@ -101,7 +105,7 @@ namespace DeadByDaylightBackup.Program
                         BackupStore.Remove(id);
                         TriggerDelete(id);
                         _settingManager.SaveSettings(BackupStore.Values.ToArray());
-                        _filemanager.DeleteFile(backup.FullFileName);
+                        FileUtility.DeleteFile(backup.FullFileName);
                     }
                     else
                     {
@@ -111,7 +115,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "Failed to remove backup '{0}' Because of {1}", id, ex.Message);
+                _logger.Log(LogLevel.Error, ex, "Failed to remove backup '{0}' Because of {1}", id, ex.Message);
                 throw;
             }
         }
@@ -125,7 +129,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Warn(ex, "Failed to retrieve backups because of {0}", ex.Message);
+                _logger.Log(LogLevel.Warn, ex, "Failed to retrieve backups because of {0}", ex.Message);
                 throw;
             }
         }
@@ -148,7 +152,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Warn(ex, "Failed to register trigger because of {0}", ex.Message);
+                _logger.Log(LogLevel.Warn, ex, "Failed to register trigger because of {0}", ex.Message);
                 throw;
             }
 
@@ -169,7 +173,7 @@ namespace DeadByDaylightBackup.Program
                     }
                     catch (Exception ex)
                     {
-                        _logger.Warn(ex, "{1} has caused an errror!", trigger.GetType());
+                        _logger.Log(LogLevel.Warn, ex, "{1} has caused an errror!", trigger.GetType());
                     }
                 }
         }
@@ -185,9 +189,33 @@ namespace DeadByDaylightBackup.Program
                     }
                     catch (Exception ex)
                     {
-                        _logger.Warn(ex, "{1} has caused an errror!", trigger.GetType());
+                        _logger.Log(LogLevel.Warn, ex, "{1} has caused an errror!", trigger.GetType());
                     }
                 }
+        }
+
+        public void CleanupOldBackups()
+        {
+            try
+            {
+                lock (BackupStore)
+                {
+                    var backupGroups = BackupStore.Values.GroupBy(x => x.UserCode);
+                    foreach (var group in backupGroups)
+                    {
+                        var safeIds = group.OrderByDescending(x => x.Date).Skip(_numberOfSavesTokeep).Select(x => x.Id).ToArray();
+                        foreach (var id in safeIds)
+                        {
+                            DeleteBackup(id);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Log(LogLevel.Warn, ex, "Failed to delete old backups!");
+                throw;
+            }
         }
     }
 }

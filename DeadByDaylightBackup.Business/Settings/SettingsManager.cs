@@ -31,7 +31,7 @@ namespace DeadByDaylightBackup.Settings
         public void SaveSettings(ICollection<T> input)
         {
             string result = ConvertToText(input);
-            FileManager.WriteToFile(SettingsFilePath, result);
+            FileUtility.WriteToFile(SettingsFilePath, result);
         }
 
         protected abstract string ConvertToText(ICollection<T> input);

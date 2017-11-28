@@ -1,15 +1,15 @@
 ﻿using DeadByDaylightBackup.Data;
 using DeadByDaylightBackup.Interface;
+using DeadByDaylightBackup.Logging;
 using DeadByDaylightBackup.Settings;
 using DeadByDaylightBackup.Utility;
-using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace DeadByDaylightBackup.Program
 {
-    internal class FilePathHandler : IFilePathHandler
+    public class FilePathHandler : IFilePathHandler
     {
         private readonly IDictionary<long, FilePath> BackupStore = new Dictionary<long, FilePath>();
         private readonly IList<IFilePathTrigger> Triggerlist = new List<IFilePathTrigger>(1);
@@ -17,10 +17,10 @@ namespace DeadByDaylightBackup.Program
         // private readonly FileUtility _filemanager;
         private readonly FilePathSettingsManager _settingManager;
 
-        private readonly Logger _logger;
+        private readonly ILogger _logger;
 
         public FilePathHandler(//FileUtility filemanager,
-            FilePathSettingsManager settingManager, Logger logger)
+            FilePathSettingsManager settingManager, ILogger logger)
         {
             _settingManager = settingManager;
             //_filemanager = filemanager;
@@ -82,7 +82,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Fatal(ex, "Failed to add filepath '{0}' Because of {1}", path, ex.Message);
+                _logger.Log(LogLevel.Fatal, ex, "Failed to add filepath '{0}' Because of {1}", path, ex.Message);
                 throw;
             }
         }
@@ -108,7 +108,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "Failed to remove filepath '{0}' Because of {1}", id, ex.Message);
+                _logger.Log(LogLevel.Error, ex, "Failed to remove filepath '{0}' Because of {1}", id, ex.Message);
                 throw;
             }
         }
@@ -131,7 +131,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Warn(ex, "Failed to register trigger  Because of {0}", ex.Message);
+                _logger.Log(LogLevel.Warn, ex, "Failed to register trigger  Because of {0}", ex.Message);
                 throw;
             }
             foreach (var val in this.BackupStore.Values)
@@ -151,7 +151,7 @@ namespace DeadByDaylightBackup.Program
                     }
                     catch (Exception ex)
                     {
-                        _logger.Warn(ex, "{1} has caused an errror!", trigger.GetType());
+                        _logger.Log(LogLevel.Warn, ex, "{1} has caused an errror!", trigger.GetType());
                     }
                 }
         }
@@ -167,7 +167,7 @@ namespace DeadByDaylightBackup.Program
                     }
                     catch (Exception ex)
                     {
-                        _logger.Warn(ex, "{1} has caused an errror!", trigger.GetType());
+                        _logger.Log(LogLevel.Warn, ex, "{1} has caused an errror!", trigger.GetType());
                     }
                 }
         }
@@ -180,7 +180,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "Failed to get filepaths because of {0}", ex.Message);
+                _logger.Log(LogLevel.Warn, ex, "Failed to get filepaths because of {0}", ex.Message);
                 throw;
             }
         }
@@ -197,7 +197,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Warn(ex, "Failed to search for filepaths because of {0}", ex.Message);
+                _logger.Log(LogLevel.Warn, ex, "Failed to search for filepaths because of {0}", ex.Message);
                 throw;
             }
         }
@@ -214,7 +214,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Fatal(ex, "Failed to get Restore backup '{0}' because of {1}", backup.FullFileName, ex.Message);
+                _logger.Log(LogLevel.Fatal, ex, "Failed to get Restore backup '{0}' because of {1}", backup.FullFileName, ex.Message);
                 throw;
             }
         }

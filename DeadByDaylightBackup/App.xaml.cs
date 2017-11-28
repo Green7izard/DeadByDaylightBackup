@@ -1,7 +1,7 @@
-﻿using DeadByDaylightBackup.Program;
+﻿using DeadByDaylightBackup.Logging;
+using DeadByDaylightBackup.Program;
 using DeadByDaylightBackup.Settings;
 using DeadByDaylightBackup.View;
-using NLog;
 using System;
 using System.Configuration;
 using System.Windows;
@@ -18,7 +18,7 @@ namespace DeadByDaylightBackup
         /// <summary>
         /// Logger
         /// </summary>
-        private Logger _logger = LogManager.GetCurrentClassLogger();
+        private ILogger _logger = LoggerFactory.GetLogger("Main App");
 
         /// <summary>
         /// The window to keep track off. Disposed when the app is disposed
@@ -62,15 +62,15 @@ namespace DeadByDaylightBackup
                 //Manage dependencies
                 // FileUtility manager = new FileManager();
                 FilePathHandler filehandle = new FilePathHandler(//manager,
-                    new FilePathSettingsManager(), LogManager.GetLogger("FileHandler"));
+                    new FilePathSettingsManager(), LoggerFactory.GetLogger("FileHandler"));
                 BackupHandler backuphandle = new BackupHandler(savesToKeep,//manager,
-                    new BackupSettingsManager(), LogManager.GetLogger("BackupHandler"));
-                _window = new MainWindow(filehandle, backuphandle, LogManager.GetLogger("UserInterface"));
+                    new BackupSettingsManager(), LoggerFactory.GetLogger("BackupHandler"));
+                _window = new MainWindow(filehandle, backuphandle, LoggerFactory.GetLogger("UserInterface"));
                 _window.ShowInTaskbar = true;
             }
             catch (Exception ex)
             {
-                _logger.Fatal(ex, "Fatal error in set up occured! {0}", ex.Message);
+                _logger.Log(LogLevel.Fatal,ex, "Fatal error in set up occured! {0}", ex.Message);
                 throw;
             }
             base.OnStartup(e);
@@ -89,7 +89,7 @@ namespace DeadByDaylightBackup
             }
             catch (Exception ex)
             {
-                _logger.Fatal(ex, "Fatal error in application occured! {0}", ex.Message);
+                _logger.Log(LogLevel.Fatal, ex, "Fatal error in application occured! {0}", ex.Message);
                 throw;
             }
         }

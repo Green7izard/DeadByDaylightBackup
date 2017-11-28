@@ -1,8 +1,8 @@
 ﻿using DeadByDaylightBackup.Data;
 using DeadByDaylightBackup.Interface;
+using DeadByDaylightBackup.Logging;
 using DeadByDaylightBackup.Settings;
 using DeadByDaylightBackup.Utility;
-using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,10 +18,10 @@ namespace DeadByDaylightBackup.Program
         // private readonly FileUtility _filemanager;
         private readonly BackupSettingsManager _settingManager;
 
-        private readonly Logger _logger;
+        private readonly ILogger _logger;
 
         public BackupHandler(int numberOfSaves, //FileUtility filemanager,
-            BackupSettingsManager settingManager, Logger logger)
+            BackupSettingsManager settingManager, ILogger logger)
         {
             _numberOfSavesTokeep = numberOfSaves;
             _settingManager = settingManager;
@@ -88,7 +88,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Fatal(ex, "Failed to backup '{0}' Because of {1}", filepath.Path, ex.Message);
+                _logger.Log(LogLevel.Fatal,ex, "Failed to backup '{0}' Because of {1}", filepath.Path, ex.Message);
                 throw;
             }
         }
@@ -115,7 +115,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "Failed to remove backup '{0}' Because of {1}", id, ex.Message);
+                _logger.Log(LogLevel.Error, ex, "Failed to remove backup '{0}' Because of {1}", id, ex.Message);
                 throw;
             }
         }
@@ -129,7 +129,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Warn(ex, "Failed to retrieve backups because of {0}", ex.Message);
+                _logger.Log(LogLevel.Warn, ex, "Failed to retrieve backups because of {0}", ex.Message);
                 throw;
             }
         }
@@ -152,7 +152,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Warn(ex, "Failed to register trigger because of {0}", ex.Message);
+                _logger.Log(LogLevel.Warn, ex, "Failed to register trigger because of {0}", ex.Message);
                 throw;
             }
 
@@ -173,7 +173,7 @@ namespace DeadByDaylightBackup.Program
                     }
                     catch (Exception ex)
                     {
-                        _logger.Warn(ex, "{1} has caused an errror!", trigger.GetType());
+                        _logger.Log(LogLevel.Warn, ex, "{1} has caused an errror!", trigger.GetType());
                     }
                 }
         }
@@ -189,7 +189,7 @@ namespace DeadByDaylightBackup.Program
                     }
                     catch (Exception ex)
                     {
-                        _logger.Warn(ex, "{1} has caused an errror!", trigger.GetType());
+                        _logger.Log(LogLevel.Warn, ex, "{1} has caused an errror!", trigger.GetType());
                     }
                 }
         }
@@ -213,7 +213,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Warn(ex, "Failed to delete old backups!");
+                _logger.Log(LogLevel.Warn, ex, "Failed to delete old backups!");
                 throw;
             }
         }

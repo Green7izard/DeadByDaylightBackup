@@ -1,7 +1,7 @@
 ﻿using DeadByDaylightBackup.Data;
 using DeadByDaylightBackup.Interface;
 using DeadByDaylightBackup.Utility;
-using NLog;
+using DeadByDaylightBackup.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,9 +22,9 @@ namespace DeadByDaylightBackup.View
         private ICollection<FilePathRow> fileRows;
         private ICollection<BackUpRow> backupRows;
 
-        private readonly Logger _logger;
+        private readonly ILogger _logger;
 
-        public MainWindow(IFilePathHandler fileHandler, IBackupHandler backupHand, Logger logger) : base()
+        public MainWindow(IFilePathHandler fileHandler, IBackupHandler backupHand, Logging.ILogger logger) : base()
         {
             _logger = logger;
             fileRows = new List<FilePathRow>(2);
@@ -216,7 +216,7 @@ namespace DeadByDaylightBackup.View
             catch (Exception ex)
             {
                 ShowPopup($"Failed to add Filepath '{path.FileName}'!", ex);
-                _logger.Warn(ex, "Failed to add FilePath '{0}'! Reason: {1}", path.Path, ex.Message);
+                _logger.Log(LogLevel.Warn, ex, "Failed to add FilePath '{0}'! Reason: {1}", path.Path, ex.Message);
             }
         }
 
@@ -317,7 +317,7 @@ namespace DeadByDaylightBackup.View
             }
             catch (Exception exception)
             {
-                _logger.Fatal(exception, "Failed to show popup for exception! Message was {0}", message);
+                _logger.Log(LogLevel.Fatal, exception, "Failed to show popup for exception! Message was {0}", message);
             }
         }
 

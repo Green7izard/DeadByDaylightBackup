@@ -158,9 +158,9 @@
       <Project>{cbb0cb05-13ad-45d2-b634-424324a7a2da}</Project>
       <Name>DeadByDaylightBackup.Logging</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Logging.NLog\Logging.NLog.csproj">
+    <ProjectReference Include="..\Logging\NLog\NLog.csproj">
       <Project>{801025bb-6fb4-43e1-a46f-4735a83db950}</Project>
-      <Name>Logging.NLog</Name>
+      <Name>NLog</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

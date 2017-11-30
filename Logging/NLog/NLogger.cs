@@ -1,4 +1,5 @@
 ﻿using System;
+using NLog;
 
 namespace DeadByDaylightBackup.Logging.NLogger
 {
@@ -18,7 +19,7 @@ namespace DeadByDaylightBackup.Logging.NLogger
         /// <param name="name">Name for the logger</param>
         public NLogger(string name)
         {
-            _logger = NLog.LogManager.GetLogger(name);
+            _logger = LogManager.GetLogger(name);
         }
 
         /// <summary>

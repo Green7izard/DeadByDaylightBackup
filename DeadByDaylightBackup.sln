@@ -23,9 +23,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeadByDaylightBackup.Busine
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeadByDaylightBackup.Logging", "DeadByDaylightBackup.Logging\DeadByDaylightBackup.Logging.csproj", "{CBB0CB05-13AD-45D2-B634-424324A7A2DA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Loggin", "Loggin", "{7AB86188-8939-4222-9410-E194E425FBC2}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Logging", "Logging", "{7AB86188-8939-4222-9410-E194E425FBC2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logging.NLog", "Logging.NLog\Logging.NLog.csproj", "{801025BB-6FB4-43E1-A46F-4735A83DB950}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logging.NLog", "Logging\NLog\Logging.NLog.csproj", "{801025BB-6FB4-43E1-A46F-4735A83DB950}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Version", "Version", "{1F35D149-7A58-4039-ABDD-6A68F335635D}"
+	ProjectSection(SolutionItems) = preProject
+		Version.cs = Version.cs
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

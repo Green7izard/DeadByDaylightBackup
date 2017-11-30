@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DeadByDaylightBackup.Logging
 {
@@ -29,16 +27,16 @@ namespace DeadByDaylightBackup.Logging
         /// </summary>
         /// <param name="name">Name for the logger, null for the name of the class</param>
         /// <returns>ILogger instance</returns>
-        public static ILogger GetLogger(string name=null)
+        public static ILogger GetLogger(string name = null)
         {
             var types = GetLoggerTypes();
-            if(types == null && !types.Any())
+            if (types == null && !types.Any())
             {
                 return new VoidLogger(name ?? "VoidLogger");
             }
             var type = types.First();
             var constructor = type.GetConstructor(new[] { typeof(string) });
-            if(constructor== null)
+            if (constructor == null)
             {
                 return (ILogger)Activator.CreateInstance(type);
             }
@@ -47,8 +45,5 @@ namespace DeadByDaylightBackup.Logging
                 return (ILogger)constructor.Invoke(new[] { name ?? type.FullName });
             }
         }
-
-
-
     }
 }

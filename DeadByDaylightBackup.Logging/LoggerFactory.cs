@@ -30,7 +30,7 @@ namespace DeadByDaylightBackup.Logging
         public static ILogger GetLogger(string name = null)
         {
             var types = GetLoggerTypes();
-            if (types == null && !types.Any())
+            if (types == null || !types.Any())
             {
                 return new VoidLogger(name ?? "VoidLogger");
             }

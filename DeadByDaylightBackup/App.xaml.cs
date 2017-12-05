@@ -45,6 +45,7 @@ namespace DeadByDaylightBackup
         {
             _window.Close();
             _window = null;
+            GC.SuppressFinalize(this);
         }
 
         #endregion IDisposable

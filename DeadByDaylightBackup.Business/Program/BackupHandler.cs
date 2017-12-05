@@ -9,6 +9,9 @@ using System.Linq;
 
 namespace DeadByDaylightBackup.Program
 {
+    /// <summary>
+    /// Basic handler for backups!
+    /// </summary>
     public class BackupHandler : IBackupHandler, IDisposable
     {
         private readonly IDictionary<long, Backup> BackupStore = new Dictionary<long, Backup>();
@@ -36,7 +39,20 @@ namespace DeadByDaylightBackup.Program
             }
         }
 
+        /// <summary>
+        /// Dispose the object
+        /// </summary>
         public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Overidable dispose function
+        /// </summary>
+        /// <param name="final"></param>
+        protected virtual void Dispose(bool final)
         {
             lock (Triggerlist)
             {
@@ -45,6 +61,7 @@ namespace DeadByDaylightBackup.Program
                 BackupStore.Clear();
             }
         }
+
 
         public long CreateBackup(FilePath filepath)
         {

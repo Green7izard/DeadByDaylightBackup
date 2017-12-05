@@ -6,6 +6,7 @@ using DeadByDaylightBackup.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DeadByDaylightBackup.Program
 {
@@ -62,7 +63,6 @@ namespace DeadByDaylightBackup.Program
             }
         }
 
-
         public long CreateBackup(FilePath filepath)
         {
             try
@@ -105,7 +105,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Log(LogLevel.Fatal,ex, "Failed to backup '{0}' Because of {1}", filepath.Path, ex.Message);
+                _logger.Log(LogLevel.Fatal, ex, "Failed to backup '{0}' Because of {1}", filepath.Path, ex.Message);
                 throw;
             }
         }
@@ -220,13 +220,32 @@ namespace DeadByDaylightBackup.Program
                     var backupGroups = BackupStore.Values.GroupBy(x => x.UserCode);
                     foreach (var group in backupGroups)
                     {
-                        var safeIds = group.OrderByDescending(x => x.Date).Skip(_numberOfSavesTokeep).Select(x => x.Id).ToArray();
-                        foreach (var id in safeIds)
+                        Backup[] latestsDateIds = new Backup[0];
+                        Backup[] largestFiles = new Backup[0];
+                        Parallel.Invoke(
+                            //Get the latests files of a date!
+                            () => latestsDateIds = group.GroupBy(x => x.Date.GetValueOrDefault().Date)
+                                    .Select(y => y.OrderByDescending(x => x.Date).LastOrDefault())
+                                    .ToArray(),
+                            //Get the largest file of a date!
+                            () => largestFiles = group.GroupBy(x => x.Date.GetValueOrDefault().Date)
+                                    .Select(y => y.OrderByDescending(x => FileUtility.GetFileSize(x.FullFileName)).LastOrDefault())
+                                    .ToArray());
+                        long[] safeIds = (latestsDateIds.Concat(largestFiles)).OrderByDescending(x => x.Date)
+                                    .Select(x => x.Id)
+                                    .Where(x => x != 0).Take(Math.Min(_numberOfSavesTokeep, 1)).ToArray();
+                        long[] idsForDeletion = BackupStore.Keys.Where(x => safeIds.Contains(x)).ToArray();
+                        foreach (var id in idsForDeletion)
                         {
                             DeleteBackup(id);
                         }
                     }
                 }
+            }
+            catch (AggregateException ag)
+            {
+                ag.Handle(ex => { _logger.Log(LogLevel.Warn, ex, "Failed to select old backups for deletion!"); return true; });
+                throw ag.InnerException ?? ag.InnerExceptions.FirstOrDefault();
             }
             catch (Exception ex)
             {

@@ -12,31 +12,31 @@
             <ColumnDefinition Width="21*" />
             <ColumnDefinition Width="642*" />
         </Grid.ColumnDefinitions>
-        <ScrollViewer HorizontalScrollBarVisibility="Visible" Height="398" Margin="0,125,27,0" VerticalAlignment="Top" Background="#FFCFCFCF" Grid.Column="2">
-            <Grid x:Name="BackUpGrid" Height="398" Background="#FFCFCFCF"  ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Hidden" Height="398" Margin="0,125,27,0" VerticalAlignment="Top" Background="#FFCFCFCF" Grid.Column="2">
+            <Grid x:Name="BackUpGrid" Height="398" Background="#FFCFCFCF"  ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="159*" />
-                    <ColumnDefinition Width="128*" />
-                    <ColumnDefinition Width="120*" />
+                    <ColumnDefinition Width="90*" />
+                    <ColumnDefinition Width="100*" />
                     <ColumnDefinition Width="94*" />
-                    <ColumnDefinition Width="54*" />
-                    <ColumnDefinition Width="52*" />
+                    <ColumnDefinition Width="65*" />
+                    <ColumnDefinition Width="63*" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="31" />
                 </Grid.RowDefinitions>
                 <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="0" Foreground="Green"
-          Height="31" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="43,0,44,0" Width="72" >FileName</Label>
+          Height="31" VerticalAlignment="Top" HorizontalAlignment="Center" Width="72" >FileName</Label>
                 <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="1" Foreground="Green"
-          Height="31" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="27,0,29,0" Width="72">UserCode</Label>
+          Height="31" VerticalAlignment="Top" HorizontalAlignment="Center" Width="72">UserCode</Label>
                 <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="2" Foreground="Green"
-         Height="31" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="35,0,45,0" Width="40" >Date</Label>
+         Height="31" VerticalAlignment="Top" HorizontalAlignment="Center" Width="40" >Date</Label>
                 <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="3" Foreground="Green"
-          Height="31" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="26,0,32,0" Width="36">Size</Label>
+          Height="31" VerticalAlignment="Top" HorizontalAlignment="Center" Width="36">Size</Label>
                 <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="4" Foreground="Green"
-          Height="31" VerticalAlignment="Top" HorizontalAlignment="Center" Width="44" Margin="2,0,8,0" >Delete</Label>
+          Height="31" VerticalAlignment="Top" HorizontalAlignment="Center" Width="55" >Delete</Label>
                 <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="5" Foreground="Green"
-          Height="31" VerticalAlignment="Top" HorizontalAlignment="Center" Width="44" Margin="4,0">Restore</Label>
+          Height="31" VerticalAlignment="Top" HorizontalAlignment="Center" Width="60">Restore</Label>
             </Grid>
         </ScrollViewer>
         <Grid x:Name="FoldersGrid" HorizontalAlignment="Left" Height="398" Margin="18,125,0,0" VerticalAlignment="Top" Width="506" Background="#FFCFCFCF">

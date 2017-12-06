@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Releases", "Releases", "{0E1CA43C-2C73-4CBF-8F42-090842AAB944}"
 	ProjectSection(SolutionItems) = preProject
 		Releases\DeadByDaylightBackupV1000.zip = Releases\DeadByDaylightBackupV1000.zip
+		Releases\DeadByDaylightBackupV1010.zip = Releases\DeadByDaylightBackupV1010.zip
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Git", "Git", "{6B9A2025-8217-49CD-8AE2-40DE85943F1A}"

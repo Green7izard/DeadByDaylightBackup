@@ -24,4 +24,12 @@ namespace DeadByDaylightBackup
         public const string AssemblyCopyright = "Copyright Bas van Summeren©  2017";
         public const string NeutralResourcesLanguage = "en";
     }
+
+
+    public static class VersionInformation
+    {
+        public const string LoggingInterface = "1.0.0.1";
+        public const string Business = "1.0.2.0";
+        public const string WPFapplication = "1.0.2.0";
+    }
 }

@@ -121,13 +121,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Content Include="NLog.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <None Include="NLog.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -158,9 +151,9 @@
       <Project>{cbb0cb05-13ad-45d2-b634-424324a7a2da}</Project>
       <Name>DeadByDaylightBackup.Logging</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Logging\NLog\NLog.csproj">
-      <Project>{801025bb-6fb4-43e1-a46f-4735a83db950}</Project>
-      <Name>NLog</Name>
+    <ProjectReference Include="..\Logging\SimpleFile\SimpleFile.csproj">
+      <Project>{34bfb824-966f-420f-8381-26c1ccfa3f4e}</Project>
+      <Name>SimpleFile</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

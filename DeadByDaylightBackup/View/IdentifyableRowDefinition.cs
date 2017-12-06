@@ -4,28 +4,53 @@ using System.Windows.Controls;
 
 namespace DeadByDaylightBackup.View
 {
+    /// <summary>
+    /// Class that is the base for grid rows of specific types!
+    /// </summary>
+    /// <typeparam name="T">Type of Identifiyable</typeparam>
     public abstract class IdentifyableRowDefinition<T> : RowDefinition, IDisposable where T : Identifyable
     {
-        public const int IMaxHeight = 40;
+        /// <summary>
+        /// Max hight of the Rows and its Contents
+        /// </summary>
+        public const double MaxRowHeight = 30;
 
+        /// <summary>
+        /// The identity of the Row
+        /// </summary>
         public T Identity
         {
             get;
-            private set;
         }
 
+        /// <summary>
+        /// Create the row
+        /// </summary>
+        /// <param name="input">The identifyable at the base</param>
         protected IdentifyableRowDefinition(T input)
         {
             Identity = input;
+            MaxHeight = MaxRowHeight;
         }
 
+        /// <summary>
+        /// Disposable
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Abstract dispose function. To be called
+        /// </summary>
+        /// <param name="final"></param>
         protected abstract void Dispose(bool final);
 
+        /// <summary>
+        /// RowNumber in the Datagrid!
+        /// </summary>
         public int RowNumber
         {
             get
@@ -39,6 +64,10 @@ namespace DeadByDaylightBackup.View
             }
         }
 
+        /// <summary>
+        /// Abstract function to update rowNumbers
+        /// </summary>
+        /// <param name="value">The new rownumber to set</param>
         protected abstract void SetRow(int value);
     }
 }

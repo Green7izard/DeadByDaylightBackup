@@ -5,6 +5,9 @@ using System.Windows.Controls;
 
 namespace DeadByDaylightBackup.View
 {
+    /// <summary>
+    /// Row to show current file paths
+    /// </summary>
     public class FilePathRow : IdentifyableRowDefinition<FilePath>
     {
         private FileSystemWatcher watcher;
@@ -44,35 +47,35 @@ namespace DeadByDaylightBackup.View
             DeleteRowButton = new Button
             {
                 Content = "Delete",
-                MaxHeight = IMaxHeight
+                MaxHeight = MaxRowHeight
             };
             DeleteRowButton.SetValue(Grid.ColumnProperty, 4);
             PathLabel = new Label
             {
                 Content = Identity.FileName
                 ,
-                MaxHeight = IMaxHeight
+                MaxHeight = MaxRowHeight
             };
             PathLabel.SetValue(Grid.ColumnProperty, 0);
             UserCodeLabel = new Label
             {
                 Content = Identity.UserCode,
-                MaxHeight = IMaxHeight
+                MaxHeight = MaxRowHeight
             };
             UserCodeLabel.SetValue(Grid.ColumnProperty, 1);
             SizeLabel = new Label
             {
                 Content = FileUtility.GetReadableFileSize(Identity.Path),
-                MaxHeight = IMaxHeight
+                MaxHeight = MaxRowHeight
             };
             SizeLabel.SetValue(Grid.ColumnProperty, 3);
             DateLabel = new Label
             {
                 Content = FileUtility.GetLastEditDate(Identity.Path).SimpleLongFormat(),
-                MaxHeight = IMaxHeight
+                MaxHeight = MaxRowHeight
             };
             DateLabel.SetValue(Grid.ColumnProperty, 2);
-            MaxHeight = IMaxHeight;
+            MaxHeight = MaxRowHeight;
             string path = Path.GetDirectoryName(Identity.Path);
             watcher = new FileSystemWatcher(path, Identity.FileName);
             watcher.Changed += (o, i) =>

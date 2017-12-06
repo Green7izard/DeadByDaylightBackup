@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DeadByDaylightBackup.Logging
 {
@@ -43,6 +39,7 @@ namespace DeadByDaylightBackup.Logging
         /// <param name="ex">The exception to log</param>
         /// <param name="message">message to log</param>
         void Log(LogLevel level, Exception ex, string message);
+
         /// <summary>
         /// Log a simple message
         /// </summary>

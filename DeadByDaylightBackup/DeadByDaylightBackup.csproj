@@ -25,7 +25,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationRevision>2</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -84,6 +84,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="..\Version.cs">
+      <Link>Properties\Version.cs</Link>
+    </Compile>
     <Compile Include="View\BackupRow.cs" />
     <Compile Include="View\FilePathRow.cs" />
     <Compile Include="View\IdentifyableRowDefinition.cs" />
@@ -118,13 +121,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Content Include="NLog.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <None Include="NLog.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -155,9 +151,9 @@
       <Project>{cbb0cb05-13ad-45d2-b634-424324a7a2da}</Project>
       <Name>DeadByDaylightBackup.Logging</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Logging.NLog\Logging.NLog.csproj">
-      <Project>{801025bb-6fb4-43e1-a46f-4735a83db950}</Project>
-      <Name>Logging.NLog</Name>
+    <ProjectReference Include="..\Logging\SimpleFile\SimpleFile.csproj">
+      <Project>{34bfb824-966f-420f-8381-26c1ccfa3f4e}</Project>
+      <Name>SimpleFile</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

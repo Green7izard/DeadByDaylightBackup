@@ -5,38 +5,40 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DeadByDaylightBackup.View"
         mc:Ignorable="d"
-        Title="DeadByDayLightBackupTool" Height="585.763" Width="1208.135">
+        Title="DeadByDayLightBackupTool" Height="585.763" Width="1230.635">
     <Grid Margin="0,10,2,0">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="535*"/>
-            <ColumnDefinition Width="21*"/>
-            <ColumnDefinition Width="642*"/>
+            <ColumnDefinition Width="535*" />
+            <ColumnDefinition Width="21*" />
+            <ColumnDefinition Width="642*" />
         </Grid.ColumnDefinitions>
-        <Grid x:Name="BackUpGrid" Height="398" Margin="7,125,28,0" VerticalAlignment="Top" Background="#FFCFCFCF" Grid.Column="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="159*" />
-                <ColumnDefinition Width="128*" />
-                <ColumnDefinition Width="120*" />
-                <ColumnDefinition Width="94*" />
-                <ColumnDefinition Width="54*" />
-                <ColumnDefinition Width="52*" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="31 " />
-            </Grid.RowDefinitions>
-            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="0" Foreground="Green"
-          Height="31" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="43,0,44,0" Width="72" >FileName</Label>
-            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="1" Foreground="Green"
-          Height="31" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="27,0,29,0" Width="72">UserCode</Label>
-            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="2" Foreground="Green"
-         Height="31" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="35,0,45,0" Width="40" >Date</Label>
-            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="3" Foreground="Green"
-          Height="31" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="26,0,32,0" Width="36">Size</Label>
-            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="4" Foreground="Green"
-          Height="31" VerticalAlignment="Top" HorizontalAlignment="Center" Width="44" Margin="2,0,8,0" >Delete</Label>
-            <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="5" Foreground="Green"
-          Height="31" VerticalAlignment="Top" HorizontalAlignment="Center" Width="44" Margin="4,0">Restore</Label>
-        </Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Hidden" Height="398" Margin="0,125,27,0" VerticalAlignment="Top" Background="#FFCFCFCF" Grid.Column="2">
+            <Grid x:Name="BackUpGrid" Height="398" Background="#FFCFCFCF"  ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="159*" />
+                    <ColumnDefinition Width="90*" />
+                    <ColumnDefinition Width="100*" />
+                    <ColumnDefinition Width="94*" />
+                    <ColumnDefinition Width="65*" />
+                    <ColumnDefinition Width="63*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="31" />
+                </Grid.RowDefinitions>
+                <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="0" Foreground="Green"
+          Height="31" VerticalAlignment="Top" HorizontalAlignment="Center" Width="72" >FileName</Label>
+                <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="1" Foreground="Green"
+          Height="31" VerticalAlignment="Top" HorizontalAlignment="Center" Width="72">UserCode</Label>
+                <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="2" Foreground="Green"
+         Height="31" VerticalAlignment="Top" HorizontalAlignment="Center" Width="40" >Date</Label>
+                <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="3" Foreground="Green"
+          Height="31" VerticalAlignment="Top" HorizontalAlignment="Center" Width="36">Size</Label>
+                <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="4" Foreground="Green"
+          Height="31" VerticalAlignment="Top" HorizontalAlignment="Center" Width="55" >Delete</Label>
+                <Label FontSize="14" FontWeight="Bold" Grid.Row="0" Grid.Column="5" Foreground="Green"
+          Height="31" VerticalAlignment="Top" HorizontalAlignment="Center" Width="60">Restore</Label>
+            </Grid>
+        </ScrollViewer>
         <Grid x:Name="FoldersGrid" HorizontalAlignment="Left" Height="398" Margin="18,125,0,0" VerticalAlignment="Top" Width="506" Background="#FFCFCFCF">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*" />
@@ -63,8 +65,8 @@
         <Label x:Name="label" Content="FilePaths" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="10,19,0,0" VerticalAlignment="Top" Width="99" Height="26" />
         <Button x:Name="AddPathButton" Content="AddPath" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="21" Margin="460,45,0,0" VerticalAlignment="Top" Width="64" />
         <Button x:Name="SearchPathsButton" Content="Search For Steam paths" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="26" Margin="18,81,0,0" VerticalAlignment="Top" Width="506" />
-        <Button x:Name="BackupNowButton" HorizontalContentAlignment="Center" Content="Back-Up" HorizontalAlignment="Left" Height="62" Margin="7,45,0,0" VerticalAlignment="Top" Width="390" Grid.Column="2" />
-        <Button x:Name="CleanupBackupsButton" HorizontalContentAlignment="Center" Content="CleanUp Old Backups" HorizontalAlignment="Left" Height="62" Margin="445,45,0,0" VerticalAlignment="Top" Width="169" Grid.Column="2" />
-        <Rectangle x:Name="Line" Fill="Black" HorizontalAlignment="Left" Height="674" Margin="10,-51,0,-78" Stroke="Black" VerticalAlignment="Top" Width="5" Panel.ZIndex="255" Grid.Column="1"/>
+        <Button x:Name="BackupNowButton" HorizontalContentAlignment="Center" Content="Back-Up" HorizontalAlignment="Left" Height="62" Margin="0,45,0,0" VerticalAlignment="Top" Width="390" Grid.Column="2" />
+        <Button x:Name="CleanupBackupsButton" HorizontalContentAlignment="Center" Content="CleanUp Old Backups" HorizontalAlignment="Left" Height="62" Margin="457,45,0,0" VerticalAlignment="Top" Width="170" Grid.Column="2" />
+        <Rectangle x:Name="Line" Fill="Black" HorizontalAlignment="Left" Height="674" Margin="0,-51,0,-78" Stroke="Black" VerticalAlignment="Top" Width="5" Panel.ZIndex="255" Grid.Column="1" />
     </Grid>
 </Window>

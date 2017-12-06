@@ -45,6 +45,7 @@ namespace DeadByDaylightBackup
         {
             _window.Close();
             _window = null;
+            GC.SuppressFinalize(this);
         }
 
         #endregion IDisposable
@@ -55,6 +56,7 @@ namespace DeadByDaylightBackup
         /// <param name="e"></param>
         protected override void OnStartup(StartupEventArgs e)
         {
+            _logger.Log(LogLevel.Debug, $"Starting DeadByDaylightBackup version {VersionInformation.Business}");
             try
             {
                 int savesToKeep = int.Parse(ConfigurationManager.AppSettings["SavesToKeep"]);
@@ -75,6 +77,7 @@ namespace DeadByDaylightBackup
             }
             base.OnStartup(e);
             ExectuteApplication(_window);
+            _logger.Log(LogLevel.Debug, $"Stopping DeadByDaylightBackup version {VersionInformation.Business}");
         }
 
         /// <summary>

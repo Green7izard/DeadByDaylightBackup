@@ -1,6 +1,16 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
 
+// General Information about an assembly is controlled through the following
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+[assembly: AssemblyTitle("DeadByDaylightBackup.SimpleFile")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("DeadByDaylightBackup.SimpleFile")]
+[assembly: AssemblyCopyright("Copyright ©  2017")]
+[assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
@@ -9,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("bb5e4e3a-8036-4c82-b1dc-82d97c2ed30d")]
+[assembly: Guid("34bfb824-966f-420f-8381-26c1ccfa3f4e")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -21,5 +31,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion(DeadByDaylightBackup.VersionInformation.Business)]
-[assembly: AssemblyFileVersion(DeadByDaylightBackup.VersionInformation.Business)]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]

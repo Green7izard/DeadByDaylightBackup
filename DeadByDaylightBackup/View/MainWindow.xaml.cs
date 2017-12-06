@@ -1,7 +1,7 @@
 ﻿using DeadByDaylightBackup.Data;
 using DeadByDaylightBackup.Interface;
-using DeadByDaylightBackup.Utility;
 using DeadByDaylightBackup.Logging;
+using DeadByDaylightBackup.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;

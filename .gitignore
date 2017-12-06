@@ -32,7 +32,7 @@
 *.app
 
 # Visual Studio Files
-*/bin/*
-*/obj/*
+**/bin/*
+**/obj/*
 .vs/*
 Packages/*

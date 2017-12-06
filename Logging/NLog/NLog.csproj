@@ -7,8 +7,8 @@
     <ProjectGuid>{801025BB-6FB4-43E1-A46F-4735A83DB950}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DeadByDaylightBackup.Logging.NLog</RootNamespace>
-    <AssemblyName>Logging.NLog</AssemblyName>
+    <RootNamespace>DeadByDaylightBackup.Logging.NLogger</RootNamespace>
+    <AssemblyName>Logging.NLogger</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -31,7 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -48,13 +48,19 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DeadByDaylightBackup.Logging\DeadByDaylightBackup.Logging.csproj">
+    <ProjectReference Include="..\..\DeadByDaylightBackup.Logging\DeadByDaylightBackup.Logging.csproj">
       <Project>{cbb0cb05-13ad-45d2-b634-424324a7a2da}</Project>
       <Name>DeadByDaylightBackup.Logging</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

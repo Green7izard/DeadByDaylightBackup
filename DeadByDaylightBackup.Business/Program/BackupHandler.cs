@@ -6,9 +6,13 @@ using DeadByDaylightBackup.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DeadByDaylightBackup.Program
 {
+    /// <summary>
+    /// Basic handler for backups!
+    /// </summary>
     public class BackupHandler : IBackupHandler, IDisposable
     {
         private readonly IDictionary<long, Backup> BackupStore = new Dictionary<long, Backup>();
@@ -36,7 +40,20 @@ namespace DeadByDaylightBackup.Program
             }
         }
 
+        /// <summary>
+        /// Dispose the object
+        /// </summary>
         public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Overidable dispose function
+        /// </summary>
+        /// <param name="final"></param>
+        protected virtual void Dispose(bool final)
         {
             lock (Triggerlist)
             {
@@ -88,7 +105,7 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Log(LogLevel.Fatal,ex, "Failed to backup '{0}' Because of {1}", filepath.Path, ex.Message);
+                _logger.Log(LogLevel.Fatal, ex, "Failed to backup '{0}' Because of {1}", filepath.Path, ex.Message);
                 throw;
             }
         }
@@ -201,15 +218,36 @@ namespace DeadByDaylightBackup.Program
                 lock (BackupStore)
                 {
                     var backupGroups = BackupStore.Values.GroupBy(x => x.UserCode);
-                    foreach (var group in backupGroups)
+                    foreach (var group in backupGroups.Where(x=>x.Count()> Math.Max(_numberOfSavesTokeep, 1)))
                     {
-                        var safeIds = group.OrderByDescending(x => x.Date).Skip(_numberOfSavesTokeep).Select(x => x.Id).ToArray();
-                        foreach (var id in safeIds)
+                        Backup[] latestsDateIds = new Backup[0];
+                        Backup[] largestFiles = new Backup[0];
+                        Backup largestFile = null;
+                        Parallel.Invoke(
+                            //Get the latests files of a date!
+                            () => latestsDateIds = group.GroupBy(x => x.Date.GetValueOrDefault().Date)
+                                    .Select(y => y.OrderByDescending(x => x.Date).LastOrDefault())
+                                    .ToArray(),
+                            //Get the largest file of a date!
+                            () => largestFiles = group.GroupBy(x => x.Date.GetValueOrDefault().Date)
+                                    .Select(y => y.OrderByDescending(x => FileUtility.GetFileSize(x.FullFileName)).LastOrDefault())
+                                    .ToArray(),
+                            () => largestFile = group.OrderByDescending(x => FileUtility.GetFileSize(x.FullFileName)).LastOrDefault());
+                        long[] safeIds = (latestsDateIds.Concat(largestFiles)).OrderByDescending(x => x.Date)
+                                    .Select(x => x.Id)
+                                    .Where(x => x != 0).Take(Math.Max(_numberOfSavesTokeep, 1)).ToArray();
+                        long[] idsForDeletion = BackupStore.Keys.Where(x => safeIds.Contains(x) && (largestFile == null || x != largestFile.Id)).ToArray();
+                        foreach (var id in idsForDeletion)
                         {
                             DeleteBackup(id);
                         }
                     }
                 }
+            }
+            catch (AggregateException ag)
+            {
+                ag.Handle(ex => { _logger.Log(LogLevel.Warn, ex, "Failed to select old backups for deletion!"); return true; });
+                throw ag.InnerException ?? ag.InnerExceptions.FirstOrDefault();
             }
             catch (Exception ex)
             {

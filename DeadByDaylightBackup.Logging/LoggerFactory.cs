@@ -21,7 +21,6 @@ namespace DeadByDaylightBackup.Logging
         /// </summary>
         private static ICollection<Type> _types = null;
 
-
         /// <summary>
         /// Get a specific Logger
         /// </summary>
@@ -115,7 +114,6 @@ namespace DeadByDaylightBackup.Logging
                 {
                     // The Assembly has already been loaded.
                 }
-
             }
         }
     }

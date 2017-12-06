@@ -218,10 +218,11 @@ namespace DeadByDaylightBackup.Program
                 lock (BackupStore)
                 {
                     var backupGroups = BackupStore.Values.GroupBy(x => x.UserCode);
-                    foreach (var group in backupGroups)
+                    foreach (var group in backupGroups.Where(x=>x.Count()> Math.Max(_numberOfSavesTokeep, 1)))
                     {
                         Backup[] latestsDateIds = new Backup[0];
                         Backup[] largestFiles = new Backup[0];
+                        Backup largestFile = null;
                         Parallel.Invoke(
                             //Get the latests files of a date!
                             () => latestsDateIds = group.GroupBy(x => x.Date.GetValueOrDefault().Date)
@@ -230,11 +231,12 @@ namespace DeadByDaylightBackup.Program
                             //Get the largest file of a date!
                             () => largestFiles = group.GroupBy(x => x.Date.GetValueOrDefault().Date)
                                     .Select(y => y.OrderByDescending(x => FileUtility.GetFileSize(x.FullFileName)).LastOrDefault())
-                                    .ToArray());
+                                    .ToArray(),
+                            () => largestFile = group.OrderByDescending(x => FileUtility.GetFileSize(x.FullFileName)).LastOrDefault());
                         long[] safeIds = (latestsDateIds.Concat(largestFiles)).OrderByDescending(x => x.Date)
                                     .Select(x => x.Id)
-                                    .Where(x => x != 0).Take(Math.Min(_numberOfSavesTokeep, 1)).ToArray();
-                        long[] idsForDeletion = BackupStore.Keys.Where(x => safeIds.Contains(x)).ToArray();
+                                    .Where(x => x != 0).Take(Math.Max(_numberOfSavesTokeep, 1)).ToArray();
+                        long[] idsForDeletion = BackupStore.Keys.Where(x => safeIds.Contains(x) && (largestFile == null || x != largestFile.Id)).ToArray();
                         foreach (var id in idsForDeletion)
                         {
                             DeleteBackup(id);

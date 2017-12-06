@@ -14,14 +14,17 @@ namespace DeadByDaylightBackup.Logging.SimpleFile
         /// The folder it will log to
         /// </summary>
         public const string Folder = "logs\\";
+
         /// <summary>
         /// default filename
         /// </summary>
         public const string FileName = "SimpleFile";
+
         /// <summary>
         /// Extension to use
         /// </summary>
         public const string Extension = "txt";
+
         /// <summary>
         /// Whether it should use the name of the logger, or the default filename
         /// </summary>
@@ -78,7 +81,7 @@ namespace DeadByDaylightBackup.Logging.SimpleFile
             string folder = Path.GetFullPath(Folder);
             Directory.CreateDirectory(folder);
             string fileName = UseLoggerName ? Name : FileName;
-            string filePath = Path.Combine(folder,$"{fileName}.{Extension}");
+            string filePath = Path.Combine(folder, $"{fileName}.{Extension}");
             File.AppendAllText(filePath, $"{input}{Environment.NewLine}", Encoding.UTF8);
         }
     }

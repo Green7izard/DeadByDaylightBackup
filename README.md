@@ -44,8 +44,10 @@ To Restore a backup: Push the restore button. !!ATTENTION!! Steam Cloud Save mig
 
 The application Will show exceptions in a popup
 It will also log them to the log folder.
-For logging it uses NLog, which is brutal overkill for a application of this size.
+For logging it can NLog, which is brutal overkill for a application of this size. Download the source and compile the NLog logger, and place the dll in the folder to use it.
 You can change the NLog config to your own liking!
+
+By default it uses a simple Filelogger.
 
 ## License
 

@@ -42,7 +42,8 @@ namespace DeadByDaylightBackup.Logging.SimpleFile
         private void WriteLine(string input)
         {
             string path = ConfigHelper.GetOrCreateSetting(LoggerLocationKey, DefaultLoggerLocation);
-            File.AppendAllText(path, $"{input}{Environment.NewLine}", Encoding.UTF8);
+            string filePath = Path.GetFullPath(path);
+            File.AppendAllText(filePath, $"{input}{Environment.NewLine}", Encoding.UTF8);
         }
     }
 }

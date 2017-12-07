@@ -98,22 +98,34 @@ namespace DeadByDaylightBackup.Logging
         /// </summary>
         private static void LoadAllDirectoryAssemblies()
         {
-            string binPath = System.AppDomain.CurrentDomain.BaseDirectory;
+            string binPath = AppDomain.CurrentDomain.BaseDirectory;
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies()
+                .Where(x => !x.FullName.StartsWith("Microsoft"))
+                .Where(x => !x.FullName.StartsWith("System"))
+                .Where(x => !x.FullName.StartsWith("WindowsBase"))
+                .Where(x => !x.FullName.StartsWith("PresentationCore"))
+                .Where(x => !x.FullName.StartsWith("PresentationFramework"))
+                .Select(x=>x.Location).Distinct().ToArray();
+            var files = Directory.GetFiles(binPath, "*.dll", SearchOption.AllDirectories).Where(x => File.Exists(x));
+            var filesToActivate = files.Where(x => !assemblies.Any(y => y.Equals(x, StringComparison.OrdinalIgnoreCase)))
+                .ToArray();
 
-            foreach (string dll in Directory.GetFiles(binPath, "*.dll", SearchOption.AllDirectories))
+            foreach (string dll in filesToActivate)
             {
-                try
-                {
-                    Assembly loadedAssembly = Assembly.LoadFile(dll);
-                }
-                catch (BadImageFormatException)
-                {
-                    // If a BadImageFormatException exception is thrown, the file is not an assembly.
-                }
-                catch (FileLoadException)
-                {
-                    // The Assembly has already been loaded.
-                }
+                //Dirty trick to prevent the direct use of Load, so that we could wordk around a false positive
+                    try {
+                        typeof(Assembly).GetMethod("Load", new[] { typeof(string) }).Invoke(null, new object[] { dll });
+                    }
+                    catch(TargetInvocationException ex)
+                    {
+                        if (!(ex.InnerException is BadImageFormatException) && !(ex.InnerException is FileLoadException))
+                        {
+                            throw ex.InnerException ?? ex;
+                        }
+                    }
+                    //Assembly loadedAssembly = Assembly.LoadFile(dll);
+
+
             }
         }
     }

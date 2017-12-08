@@ -105,25 +105,27 @@ namespace DeadByDaylightBackup.Logging
                 .Where(x => !x.FullName.StartsWith("WindowsBase"))
                 .Where(x => !x.FullName.StartsWith("PresentationCore"))
                 .Where(x => !x.FullName.StartsWith("PresentationFramework"))
-                .Select(x=>x.Location).Distinct().ToArray();
+                .Select(x => x.Location).Distinct().ToArray();
             var files = Directory.GetFiles(binPath, "*.dll", SearchOption.AllDirectories).Where(x => File.Exists(x));
             var filesToActivate = files.Where(x => !assemblies.Any(y => y.Equals(x, StringComparison.OrdinalIgnoreCase)))
                 .ToArray();
 
             foreach (string dll in filesToActivate)
             {
-                //Dirty trick to prevent the direct use of Load, so that we could wordk around a false positive
-                    try {
-                        typeof(Assembly).GetMethod("Load", new[] { typeof(string) }).Invoke(null, new object[] { dll });
-                    }
-                    catch(TargetInvocationException ex)
+                //Dirty trick to prevent the direct use of Load, so that we could work around a false positive
+                try
+                {
+                    AssemblyName an = AssemblyName.GetAssemblyName(dll);
+                    typeof(Assembly).GetMethod("Load", new[] { typeof(AssemblyName) }).Invoke(null, new object[] { an });
+                }
+                catch (TargetInvocationException ex)
+                {
+                    if (!(ex.InnerException is BadImageFormatException) && !(ex.InnerException is FileLoadException))
                     {
-                        if (!(ex.InnerException is BadImageFormatException) && !(ex.InnerException is FileLoadException))
-                        {
-                            throw ex.InnerException ?? ex;
-                        }
+                        throw ex.InnerException ?? ex;
                     }
-                    //Assembly loadedAssembly = Assembly.LoadFile(dll);
+                }
+                //Assembly loadedAssembly = Assembly.LoadFile(dll);
 
 
             }

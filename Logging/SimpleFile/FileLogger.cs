@@ -62,22 +62,31 @@ namespace DeadByDaylightBackup.Logging.SimpleFile
 
         public void Log(LogLevel level, string message)
         {
-            WriteLine($"{Name}|{level.ToString()}: {message}");
+            WriteLine($"{Name} {GetCurrentDateTimeString()} |{level.ToString()}: {message}");
         }
 
         public void Log(LogLevel level, Exception ex, string message)
         {
-            WriteLine($"{Name}|{level.ToString()}: {message}\n{ex.ToString()}");
+            WriteLine($"{Name} {GetCurrentDateTimeString()} |{level.ToString()}: {message}\n{ex.ToString()}");
         }
 
         public void Log(LogLevel level, string message, params object[] stringParamters)
         {
-            WriteLine(string.Format($"{Name}|{level.ToString()}: {message}", stringParamters));
+            WriteLine(string.Format($"{Name} {GetCurrentDateTimeString()} |{level.ToString()}: {message}", stringParamters));
         }
 
         public void Log(LogLevel level, Exception ex, string message, params object[] stringParamters)
         {
-            WriteLine(string.Format($"{Name}|{level.ToString()}: {message}\n{ex.ToString()}", stringParamters));
+            WriteLine(string.Format($"{Name} {GetCurrentDateTimeString()} |{level.ToString()}: {message}\n{ex.ToString()}", stringParamters));
+        }
+
+        /// <summary>
+        /// Generate a timeStamp
+        /// </summary>
+        /// <returns></returns>
+        public string GetCurrentDateTimeString()
+        {
+            return DateTime.Now.ToString("yyyy-MM-dd HH:mm");
         }
 
         /// <summary>

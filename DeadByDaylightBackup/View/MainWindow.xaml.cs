@@ -97,7 +97,7 @@ namespace DeadByDaylightBackup.View
                 }
                 catch (Exception ex)
                 {
-                    ShowPopup($"Backup failed for!{filepath.FileName}", ex);
+                    ShowPopup($"Backup failed for {filepath.FileName}", ex);
                 }
             }
         }

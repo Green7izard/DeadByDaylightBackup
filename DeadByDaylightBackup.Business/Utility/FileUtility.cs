@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Security.Permissions;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -112,6 +114,11 @@ namespace DeadByDaylightBackup.Utility
         public static void CreateDirectory(string folder)
         {
             Directory.CreateDirectory(folder);
+            DirectorySecurity sec = Directory.GetAccessControl(folder);
+            // Using this instead of the "Everyone" string means we work on non-English systems.
+            SecurityIdentifier everyone = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+            sec.AddAccessRule(new FileSystemAccessRule(everyone, FileSystemRights.Modify | FileSystemRights.Synchronize, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.None, AccessControlType.Allow));
+            Directory.SetAccessControl(folder, sec);
         }
 
         /// <summary>

@@ -40,5 +40,9 @@ using System.Windows;
 [assembly: AssemblyVersion(DeadByDaylightBackup.VersionInformation.WPFapplication)]
 [assembly: AssemblyFileVersion(DeadByDaylightBackup.VersionInformation.WPFapplication)]
 
+[assembly: AssemblyTitle("DeadByDaylightBackup")]
+[assembly: AssemblyDescription("WPF Version of Dead By DaylightBackup")]
+[assembly: AssemblyProduct("DeadByDaylightBackup")]
+
 [assembly: AssemblyCulture("")]
 

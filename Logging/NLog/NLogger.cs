@@ -1,5 +1,5 @@
-﻿using System;
-using NLog;
+﻿using NLog;
+using System;
 
 namespace DeadByDaylightBackup.Logging.NLogger
 {
@@ -12,6 +12,14 @@ namespace DeadByDaylightBackup.Logging.NLogger
         /// The NLog to use
         /// </summary>
         private readonly NLog.ILogger _logger;
+
+        /// <summary>
+        /// Register this class as the logger
+        /// </summary>
+        public static void Install()
+        {
+            LoggerFactory.SetLoggerType(typeof(NLogger));
+        }
 
         /// <summary>
         /// The constuctor

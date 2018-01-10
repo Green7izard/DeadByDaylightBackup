@@ -84,9 +84,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="..\Version.cs">
+    <Compile Include="..\DeadByDaylightBackup.Version\Properties\Version.cs">
       <Link>Properties\Version.cs</Link>
     </Compile>
+    <Compile Include="Config.cs" />
+    <Compile Include="DLLHelper.cs" />
     <Compile Include="View\BackupRow.cs" />
     <Compile Include="View\FilePathRow.cs" />
     <Compile Include="View\IdentifyableRowDefinition.cs" />
@@ -151,6 +153,10 @@
       <Project>{cbb0cb05-13ad-45d2-b634-424324a7a2da}</Project>
       <Name>DeadByDaylightBackup.Logging</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DeadByDaylightBackup.Version\DeadByDaylightBackup.Version.csproj">
+      <Project>{9572ba24-829d-4813-8dd3-f05e44de2bfb}</Project>
+      <Name>DeadByDaylightBackup.Version</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Logging\SimpleFile\SimpleFile.csproj">
       <Project>{34bfb824-966f-420f-8381-26c1ccfa3f4e}</Project>
       <Name>SimpleFile</Name>
@@ -164,4 +170,11 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="AfterResolveReferences">
+    <ItemGroup>
+      <EmbeddedResource Include="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.Extension)' == '.dll'">
+        <LogicalName>%(ReferenceCopyLocalPaths.DestinationSubDirectory)%(ReferenceCopyLocalPaths.Filename)%(ReferenceCopyLocalPaths.Extension)</LogicalName>
+      </EmbeddedResource>
+    </ItemGroup>
+  </Target>
 </Project>

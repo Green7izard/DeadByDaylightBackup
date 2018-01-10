@@ -40,7 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Version.cs">
+    <Compile Include="..\DeadByDaylightBackup.Version\Properties\Version.cs">
       <Link>Properties\Version.cs</Link>
     </Compile>
     <Compile Include="ILogger.cs" />
@@ -54,6 +54,12 @@
     <Compile Include="LogLevel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VoidLogger.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DeadByDaylightBackup.Version\DeadByDaylightBackup.Version.csproj">
+      <Project>{9572ba24-829d-4813-8dd3-f05e44de2bfb}</Project>
+      <Name>DeadByDaylightBackup.Version</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

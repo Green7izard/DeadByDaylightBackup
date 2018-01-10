@@ -6,6 +6,10 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyCulture("")]
 
+[assembly: AssemblyTitle("DeadByDaylightBackup.Logging")]
+[assembly: AssemblyDescription("Logging support for Dead By Daylight Backup")]
+[assembly: AssemblyProduct("DeadByDaylightBackup.Logging")]
+
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from
 // COM, set the ComVisible attribute to true on that type.

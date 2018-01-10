@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace DeadByDaylightBackup.Logging
 {
@@ -37,7 +35,7 @@ namespace DeadByDaylightBackup.Logging
                     type = GetLoggerType();
                     try
                     {
-                        var constructor = type.GetConstructor(new[] { typeof(string) });
+                        var constructor = type != null ? type.GetConstructor(new[] { typeof(string) }) : null;
                         if (constructor == null)
                         {
                             return (ILogger)Activator.CreateInstance(type);
@@ -49,10 +47,34 @@ namespace DeadByDaylightBackup.Logging
                     }
                     catch
                     {
-                        _types.Remove(type);
+                        if (type != null)
+                            _types.Remove(type);
                     }
                 } while (type != null);
                 return new VoidLogger(name ?? "VoidLogger");
+            }
+        }
+
+        /// <summary>
+        /// Set a logger type a single time only!
+        /// Throws exceptions if it is not accaptable
+        /// </summary>
+        /// <param name="type">The type to set</param>
+        public static void SetLoggerType(Type type)
+        {
+            if (type == null) throw new ArgumentNullException(nameof(type));
+            if (!typeof(ILogger).IsAssignableFrom(type)) throw new InvalidCastException($"Cannot cast {type.FullName.ToString()} to {typeof(ILogger).FullName.ToString()}!");
+            if (!type.IsClass || type.IsAbstract || type.IsInterface) throw new NotSupportedException($"{type.FullName.ToString()} cannot be instantiated!");
+            lock (_lock)
+            {
+                if (_types == null || !_types.Any())
+                {
+                    _types = new[] { type };
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Logger is already set to: {type.FullName.ToString()}!");
+                }
             }
         }
 
@@ -75,7 +97,6 @@ namespace DeadByDaylightBackup.Logging
         /// <returns>a Collection of Types</returns>
         internal static ICollection<Type> GetLoggerTypes()
         {
-            LoadAllDirectoryAssemblies();
             var assemblies = AppDomain.CurrentDomain.GetAssemblies()
                 .Where(x => !x.FullName.StartsWith("Microsoft"))
                 .Where(x => !x.FullName.StartsWith("System"))
@@ -88,33 +109,8 @@ namespace DeadByDaylightBackup.Logging
             var typesNotSystem = types.Where(x => !x.FullName.StartsWith("System") && !x.FullName.StartsWith("Standard"));
             var typesNotMicrosoft = typesNotSystem.Where(x => !x.FullName.StartsWith("Microsoft") && !x.FullName.StartsWith("Windows") && !x.FullName.StartsWith("MS"));
             var instantiableTypes = typesNotMicrosoft.Where(x => x.IsClass && x != typeof(VoidLogger));
-            var shouldBe = typesNotMicrosoft.Where(x => x.FullName.StartsWith("DeadByDaylightBackup.Logging.SimpleFile"));
             var loggers = instantiableTypes.Where(p => typeof(ILogger).IsAssignableFrom(p));
             return loggers.ToArray();
-        }
-
-        /// <summary>
-        /// Load all available assemblies
-        /// </summary>
-        private static void LoadAllDirectoryAssemblies()
-        {
-            string binPath = System.AppDomain.CurrentDomain.BaseDirectory;
-
-            foreach (string dll in Directory.GetFiles(binPath, "*.dll", SearchOption.AllDirectories))
-            {
-                try
-                {
-                    Assembly loadedAssembly = Assembly.LoadFile(dll);
-                }
-                catch (BadImageFormatException)
-                {
-                    // If a BadImageFormatException exception is thrown, the file is not an assembly.
-                }
-                catch (FileLoadException)
-                {
-                    // The Assembly has already been loaded.
-                }
-            }
         }
     }
 }

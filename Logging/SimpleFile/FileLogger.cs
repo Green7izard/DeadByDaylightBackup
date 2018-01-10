@@ -11,6 +11,14 @@ namespace DeadByDaylightBackup.Logging.SimpleFile
     public class FileLogger : ILogger
     {
         /// <summary>
+        /// Register this class as the logger
+        /// </summary>
+        public static void Install()
+        {
+            LoggerFactory.SetLoggerType(typeof(FileLogger));
+        }
+
+        /// <summary>
         /// The folder it will log to
         /// </summary>
         public const string Folder = "logs\\";

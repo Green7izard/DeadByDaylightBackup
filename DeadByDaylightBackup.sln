@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Releases", "Releases", "{0E
 	ProjectSection(SolutionItems) = preProject
 		Releases\DeadByDaylightBackupV1000.zip = Releases\DeadByDaylightBackupV1000.zip
 		Releases\DeadByDaylightBackupV1010.zip = Releases\DeadByDaylightBackupV1010.zip
+		Releases\DeadByDaylightBackupV1020.zip = Releases\DeadByDaylightBackupV1020.zip
+		Releases\DeadByDaylightBackupV1021.zip = Releases\DeadByDaylightBackupV1021.zip
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Git", "Git", "{6B9A2025-8217-49CD-8AE2-40DE85943F1A}"
@@ -29,11 +31,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLog", "Logging\NLog\NLog.csproj", "{801025BB-6FB4-43E1-A46F-4735A83DB950}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Version", "Version", "{1F35D149-7A58-4039-ABDD-6A68F335635D}"
-	ProjectSection(SolutionItems) = preProject
-		Version.cs = Version.cs
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleFile", "Logging\SimpleFile\SimpleFile.csproj", "{34BFB824-966F-420F-8381-26C1CCFA3F4E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeadByDaylightBackup.Version", "DeadByDaylightBackup.Version\DeadByDaylightBackup.Version.csproj", "{9572BA24-829D-4813-8DD3-F05E44DE2BFB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +62,10 @@ Global
 		{34BFB824-966F-420F-8381-26C1CCFA3F4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34BFB824-966F-420F-8381-26C1CCFA3F4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34BFB824-966F-420F-8381-26C1CCFA3F4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9572BA24-829D-4813-8DD3-F05E44DE2BFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9572BA24-829D-4813-8DD3-F05E44DE2BFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9572BA24-829D-4813-8DD3-F05E44DE2BFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9572BA24-829D-4813-8DD3-F05E44DE2BFB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -71,5 +76,6 @@ Global
 		{7AB86188-8939-4222-9410-E194E425FBC2} = {789945F0-DA88-4765-A368-F177A1FE420C}
 		{801025BB-6FB4-43E1-A46F-4735A83DB950} = {7AB86188-8939-4222-9410-E194E425FBC2}
 		{34BFB824-966F-420F-8381-26C1CCFA3F4E} = {7AB86188-8939-4222-9410-E194E425FBC2}
+		{9572BA24-829D-4813-8DD3-F05E44DE2BFB} = {1F35D149-7A58-4039-ABDD-6A68F335635D}
 	EndGlobalSection
 EndGlobal

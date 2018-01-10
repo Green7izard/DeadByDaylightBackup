@@ -4,12 +4,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DeadByDaylightBackup.SimpleFile")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DeadByDaylightBackup.SimpleFile")]
-[assembly: AssemblyCopyright("Copyright ©  2017")]
+[assembly: AssemblyTitle("DeadByDaylightBackup.Logging.SimpleFile")]
+[assembly: AssemblyDescription("Simple to File logging system")]
+[assembly: AssemblyConfiguration("Logging Module")]
+[assembly: AssemblyCompany("Bas van Summeren")]
+[assembly: AssemblyProduct("DeadByDaylightBackup.Logging.SimpleFile")]
+[assembly: AssemblyCopyright("Copyright Bas van Summeren ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

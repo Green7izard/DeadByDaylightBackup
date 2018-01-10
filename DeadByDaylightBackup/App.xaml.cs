@@ -15,10 +15,17 @@ namespace DeadByDaylightBackup
     {
         #region privates
 
+        public App()
+        {
+            //Config.AddDllHelper();
+            Config.SetUpLogger();
+            _logger = LoggerFactory.GetLogger("Main App");
+        }
+
         /// <summary>
         /// Logger
         /// </summary>
-        private ILogger _logger = LoggerFactory.GetLogger("Main App");
+        private readonly ILogger _logger;
 
         /// <summary>
         /// The window to keep track off. Disposed when the app is disposed
@@ -50,6 +57,7 @@ namespace DeadByDaylightBackup
 
         #endregion IDisposable
 
+     
         /// <summary>
         /// Startup functionality
         /// </summary>

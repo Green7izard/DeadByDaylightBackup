@@ -1,5 +1,4 @@
 ﻿using DeadByDaylightBackup.Data;
-using DeadByDaylightBackup.Utility;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
@@ -10,7 +9,7 @@ namespace DeadByDaylightBackup.Settings
     {
         public BackupSettingsManager()
         {
-            System.IO.Directory.CreateDirectory(GetBackupFileLocation());
+            Directory.CreateDirectory(GetBackupFileLocation());
         }
 
         public string GetBackupFileLocation()
@@ -28,17 +27,7 @@ namespace DeadByDaylightBackup.Settings
             {
                 try
                 {
-                    Backup result = new Backup()
-                    {
-                        FullFileName = file
-                    };
-                    var pathString = result.FullFileName.Replace(result.FileName, "").Trim(' ', '\\', '/', '.').Split('\\');
-                    var dateString = pathString[pathString.Length - 2];
-                    var playerstring = pathString[pathString.Length - 1];
-
-                    result.Date = dateString.ToSimpleShortDate();
-                    result.UserCode = playerstring;
-                    results.Add(result);
+                    results.Add(new Backup(file));
                 }
                 catch
                 {

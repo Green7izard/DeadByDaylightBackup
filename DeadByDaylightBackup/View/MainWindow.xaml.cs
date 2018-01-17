@@ -313,7 +313,7 @@ namespace DeadByDaylightBackup.View
                 if (ex == null)
                     MessageBox.Show(this, message, message, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 else
-                    MessageBox.Show(this, message, ex.ToString(), MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(this, ex.ToString(), message, MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (Exception exception)
             {

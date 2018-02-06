@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace DeadByDaylightBackup.Program
 {
-    public class FilePathHandler : IFilePathHandler
+    public class FilePathHandler : ADisposable, IFilePathHandler
     {
         private readonly IDictionary<long, FilePath> BackupStore = new Dictionary<long, FilePath>();
         private readonly IList<IFilePathTrigger> Triggerlist = new List<IFilePathTrigger>(1);
@@ -19,8 +19,7 @@ namespace DeadByDaylightBackup.Program
 
         private readonly ILogger _logger;
 
-        public FilePathHandler(//FileUtility filemanager,
-            FilePathSettingsManager settingManager, ILogger logger)
+        public FilePathHandler(FilePathSettingsManager settingManager, ILogger logger) : base()
         {
             _settingManager = settingManager;
             //_filemanager = filemanager;
@@ -34,16 +33,6 @@ namespace DeadByDaylightBackup.Program
                     BackupStore.Add(id, setting);
                     id++;
                 }
-            }
-        }
-
-        public void Dispose()
-        {
-            lock (Triggerlist)
-            {
-                _settingManager.SaveSettings(BackupStore.Values.ToArray());
-                Triggerlist.Clear();
-                BackupStore.Clear();
             }
         }
 
@@ -217,6 +206,17 @@ namespace DeadByDaylightBackup.Program
                 _logger.Log(LogLevel.Fatal, ex, "Failed to get Restore backup '{0}' because of {1}", backup.FullFileName, ex.Message);
                 throw;
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+                lock (Triggerlist)
+                {
+                    _settingManager.SaveSettings(BackupStore.Values.ToArray());
+                    Triggerlist.Clear();
+                    BackupStore.Clear();
+                }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using DeadByDaylightBackup.Data;
+using DeadByDaylightBackup.Utility.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;

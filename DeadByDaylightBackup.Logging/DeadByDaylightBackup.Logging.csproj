@@ -45,12 +45,12 @@
     </Compile>
     <Compile Include="ILogger.cs" />
     <Compile Include="LoggerFactory.cs" />
-    <Compile Include="Trace\DebugHelper.cs" />
-    <Compile Include="Trace\InfoHelper.cs" />
-    <Compile Include="Trace\WarnHelper.cs" />
-    <Compile Include="Trace\ErrorHelper.cs" />
-    <Compile Include="Trace\FatalHelper.cs" />
-    <Compile Include="Trace\TraceHelper.cs" />
+    <Compile Include="Helper\DebugHelper.cs" />
+    <Compile Include="Helper\InfoHelper.cs" />
+    <Compile Include="Helper\WarnHelper.cs" />
+    <Compile Include="Helper\ErrorHelper.cs" />
+    <Compile Include="Helper\FatalHelper.cs" />
+    <Compile Include="Helper\TraceHelper.cs" />
     <Compile Include="LogLevel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VoidLogger.cs" />

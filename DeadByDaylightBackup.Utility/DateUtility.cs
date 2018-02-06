@@ -93,5 +93,31 @@ namespace DeadByDaylightBackup.Utility
         }
 
         #endregion longdate
+
+
+        #region Utility
+
+        /// <summary>
+        /// round a datetime up to the nearest timespan
+        /// </summary>
+        /// <param name="dt">DateTime that needs to be rounded</param>
+        /// <param name="d">the span for which should be rounded</param>
+        /// <returns>Rounded DateTime</returns>
+        public static DateTime RoundUp(this DateTime dt, TimeSpan d)
+        {
+            return new DateTime(((dt.Ticks + d.Ticks - 1) / d.Ticks) * d.Ticks);
+        }
+
+        /// <summary>
+        /// round a datetime up to the nearest timespan
+        /// </summary>
+        /// <param name="dt">DateTime that needs to be rounded</param>
+        /// <param name="d">the span for which should be rounded</param>
+        /// <returns>Rounded DateTime</returns>
+        public static DateTime? RoundUp(this DateTime? dt, TimeSpan d)
+        {
+            return dt.HasValue? (DateTime?)dt.Value.RoundUp(d):null;
+        }
+        #endregion
     }
 }

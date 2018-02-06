@@ -1,10 +1,9 @@
-﻿using DeadByDaylightBackup.Utility;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace DeadByDaylightBackup.Settings
+namespace DeadByDaylightBackup.Utility.Settings
 {
     public abstract class SettingsManager<T> : ISettingsManager<T> where T : class
     {

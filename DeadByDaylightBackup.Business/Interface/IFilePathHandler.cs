@@ -16,4 +16,5 @@ namespace DeadByDaylightBackup.Interface
 
         void RestoreBackup(Backup backup);
     }
+
 }

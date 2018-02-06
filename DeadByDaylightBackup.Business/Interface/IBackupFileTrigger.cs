@@ -1,11 +1,9 @@
 ﻿using DeadByDaylightBackup.Data;
+using DeadByDaylightBackup.Utility.Trigger;
 
 namespace DeadByDaylightBackup.Interface
 {
-    public interface IBackupFileTrigger
+    public interface IBackupFileTrigger : ITrigger<Backup>
     {
-        void AddBackupFile(Backup backup);
-
-        void RemoveBackupFile(long id);
     }
 }

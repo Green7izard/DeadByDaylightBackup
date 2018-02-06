@@ -106,7 +106,7 @@ namespace DeadByDaylightBackup.View
 
         #region IBackupFileTrigger
 
-        public void AddBackupFile(Backup backup)
+        public void CreationTrigger(Backup backup)
         {
             try
             {
@@ -151,15 +151,16 @@ namespace DeadByDaylightBackup.View
             }
         }
 
-        public void RemoveBackupFile(long id)
+
+        public void DeletionTrigger(Backup deleted)
         {
             try
             {
                 lock (backupRows)
                 {
-                    if (backupRows.Any(x => x.Identity.Id == id))
+                    if (backupRows.Any(x => x.Identity.Equals(deleted)))
                     {
-                        var row = backupRows.First(x => x.Identity.Id == id);
+                        var row = backupRows.First(x => x.Identity.Equals(deleted));
                         int rowNumber = row.RowNumber;
                         BackUpGrid.Children.Remove(row.DeleteRowButton);
                         BackUpGrid.Children.Remove(row.PathLabel);
@@ -175,7 +176,7 @@ namespace DeadByDaylightBackup.View
             }
             catch (Exception ex)
             {
-                ShowPopup($"Failed to remove Backup from UI'{backupRows.Where(x => x.Identity.Id == id).Select(x => x.Identity.FullFileName).FirstOrDefault() ?? id.ToString()}'!", ex);
+                ShowPopup($"Failed to remove Backup from UI'{deleted.FullFileName?? deleted.Id.ToString()}'!", ex);
             }
         }
 
@@ -183,7 +184,7 @@ namespace DeadByDaylightBackup.View
 
         #region IFilePathTrigger
 
-        public void AddFilePath(FilePath path)
+        public void CreationTrigger(FilePath path)
         {
             try
             {
@@ -220,15 +221,27 @@ namespace DeadByDaylightBackup.View
             }
         }
 
-        public void RemoveFilePath(long id)
+        public void UpdateTrigger(FilePath input)
+        {
+            lock (fileRows)
+            {
+                if (fileRows.Any(x => x.Identity.Equals(input)))
+                {
+                    var row = fileRows.First(x => x.Identity.Equals(input));
+                    row.Refresh();
+                }
+            }
+        }
+
+        public void DeletionTrigger(FilePath id)
         {
             try
             {
                 lock (fileRows)
                 {
-                    if (fileRows.Any(x => x.Identity.Id == id))
+                    if (fileRows.Any(x => x.Identity.Equals(id)))
                     {
-                        var row = fileRows.First(x => x.Identity.Id == id);
+                        var row = fileRows.First(x => x.Identity.Equals(id));
                         int rowNumber = row.RowNumber;
                         FoldersGrid.Children.Remove(row.DeleteRowButton);
                         FoldersGrid.Children.Remove(row.PathLabel);
@@ -243,7 +256,7 @@ namespace DeadByDaylightBackup.View
             }
             catch (Exception ex)
             {
-                ShowPopup($"Failed to remove Filepath from UI'{fileRows.Where(x => x.Identity.Id == id).Select(x => x.Identity.Path).FirstOrDefault() ?? id.ToString()}'!", ex);
+                ShowPopup($"Failed to remove Filepath from UI'{fileRows.Where(x => x.Identity.Equals(id)).Select(x => x.Identity.Path).FirstOrDefault() ?? id.ToString()}'!", ex);
             }
         }
 
@@ -320,6 +333,8 @@ namespace DeadByDaylightBackup.View
                 _logger.Log(LogLevel.Fatal, exception, "Failed to show popup for exception! Message was {0}", message);
             }
         }
+
+    
 
         #endregion UIHelper
     }

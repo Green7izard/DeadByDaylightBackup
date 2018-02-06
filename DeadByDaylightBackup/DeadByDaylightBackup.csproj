@@ -88,7 +88,6 @@
       <Link>Properties\Version.cs</Link>
     </Compile>
     <Compile Include="Config.cs" />
-    <Compile Include="DLLHelper.cs" />
     <Compile Include="View\BackupRow.cs" />
     <Compile Include="View\FilePathRow.cs" />
     <Compile Include="View\IdentifyableRowDefinition.cs" />

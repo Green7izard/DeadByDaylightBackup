@@ -86,7 +86,7 @@ namespace DeadByDaylightBackup.Program
                     {
                         var backup = BackupStore[id];
                         BackupStore.Remove(id);
-                        TriggerDelete(id);
+                        TriggerDelete(backup);
                         _settingManager.SaveSettings(BackupStore.Values.ToArray());
                     }
                     else
@@ -125,7 +125,7 @@ namespace DeadByDaylightBackup.Program
             }
             foreach (var val in this.BackupStore.Values)
             {
-                trigger.AddFilePath(val);
+                trigger.CreationTrigger(val);
             }
         }
 
@@ -136,7 +136,7 @@ namespace DeadByDaylightBackup.Program
                 {
                     try
                     {
-                        trigger.AddFilePath(backup);
+                        trigger.CreationTrigger(backup);
                     }
                     catch (Exception ex)
                     {
@@ -145,14 +145,14 @@ namespace DeadByDaylightBackup.Program
                 }
         }
 
-        private void TriggerDelete(long id)
+        private void TriggerDelete(FilePath id)
         {
             lock (Triggerlist)
                 foreach (IFilePathTrigger trigger in Triggerlist)
                 {
                     try
                     {
-                        trigger.RemoveFilePath(id);
+                        trigger.DeletionTrigger(id);
                     }
                     catch (Exception ex)
                     {

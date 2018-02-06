@@ -16,12 +16,5 @@ namespace DeadByDaylightBackup
             FileLogger.Install();
         }
 
-        /// <summary>
-        /// Add the DLL Helper
-        /// </summary>
-        public static void AddDllHelper()
-        {
-            AppDomain.CurrentDomain.AssemblyResolve += DLLHelper.OnResolveAssembly;
-        }
     }
 }

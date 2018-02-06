@@ -110,7 +110,7 @@ namespace DeadByDaylightBackup.Program
                         {
                             BackupStore.Remove(id);
                         }
-                        TriggerDelete(id);
+                        TriggerDelete(backup);
                         //  _settingManager.SaveSettings(BackupStore.Values.ToArray());
                         FileUtility.DeleteFile(backup.FullFileName);
                     }
@@ -165,7 +165,7 @@ namespace DeadByDaylightBackup.Program
 
             foreach (var val in this.BackupStore.Values)
             {
-                trigger.AddBackupFile(val);
+                trigger.CreationTrigger(val);
             }
         }
 
@@ -176,7 +176,7 @@ namespace DeadByDaylightBackup.Program
                 {
                     try
                     {
-                        trigger.AddBackupFile(backup);
+                        trigger.CreationTrigger(backup);
                     }
                     catch (Exception ex)
                     {
@@ -185,14 +185,14 @@ namespace DeadByDaylightBackup.Program
                 }
         }
 
-        private void TriggerDelete(long id)
+        private void TriggerDelete(Backup id)
         {
             lock (Triggerlist)
                 foreach (IBackupFileTrigger trigger in Triggerlist)
                 {
                     try
                     {
-                        trigger.RemoveBackupFile(id);
+                        trigger.DeletionTrigger(id);
                     }
                     catch (Exception ex)
                     {
@@ -208,14 +208,15 @@ namespace DeadByDaylightBackup.Program
                 lock (BackupStore)
                 {
                     CleanUpBadBackups();
-                    var backupGroups = BackupStore.Values.GroupBy(x => x.UserCode);
+                    var backupGroups = BackupStore.Values.Where(x => x != null).GroupBy(x => x.UserCode);
                     foreach (var group in backupGroups.Where(x => x.Count() > Math.Max(_numberOfSavesTokeep, 2)))
                     {
                         Backup largestFile = group.OrderByDescending(x => FileUtility.GetFileSize(x.FullFileName)).First();
-                        Backup[] latestsDateIds = latestsDateIds = group.GroupBy(x => x.Date.GetValueOrDefault().Date)
-                                   .Select(y => y.OrderByDescending(x => x.Date).LastOrDefault(x => x.Id != largestFile.Id))
-                                   .OrderByDescending(x => x.Date).Take(_numberOfSavesTokeep - 1)
-                                   .ToArray();
+                        Backup[] dateGroups = group.GroupBy(x => x.Date.GetValueOrDefault().Date)
+                            .Select(y => y.OrderByDescending(x => x.Date)
+                            .LastOrDefault(x => x.Id != largestFile.Id)).ToArray();
+                        Backup[] latestsDateIds = dateGroups.Where(x => x != null && x.Date != null)
+                            .OrderByDescending(x => x.Date).Take(_numberOfSavesTokeep).ToArray();
                         var idsForDeletion = BackupStore.Keys.Where(x => !latestsDateIds.Any(y => y.Id == x) && x != largestFile.Id);
                         RemoveBackups(idsForDeletion);
                     }

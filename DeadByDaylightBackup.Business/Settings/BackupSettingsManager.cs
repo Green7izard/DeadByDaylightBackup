@@ -1,11 +1,12 @@
 ﻿using DeadByDaylightBackup.Data;
+using DeadByDaylightBackup.Utility.Settings;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 
 namespace DeadByDaylightBackup.Settings
 {
-    public class BackupSettingsManager : ISettingsManager<Backup>
+    public class BackupSettingsManager : ISettingsGetter<Backup>
     {
         public BackupSettingsManager()
         {
@@ -35,11 +36,6 @@ namespace DeadByDaylightBackup.Settings
                 }
             }
             return results.ToArray();
-        }
-
-        public void SaveSettings(ICollection<Backup> input)
-        {
-            //IGNORE dynamic
         }
     }
 }

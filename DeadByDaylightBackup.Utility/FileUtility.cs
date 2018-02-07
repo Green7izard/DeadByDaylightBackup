@@ -31,7 +31,8 @@ namespace DeadByDaylightBackup.Utility
             }
             if (parent.Exists && parent.GetFileSystemInfos().Length == 0)
             {
-                try {
+                try
+                {
                     Directory.Delete(parent.FullName);
                 }
                 catch

@@ -1,49 +1,37 @@
 ﻿using DeadByDaylightBackup.Data;
 using DeadByDaylightBackup.Interface;
 using DeadByDaylightBackup.Logging;
+using DeadByDaylightBackup.Logging.Helper;
 using DeadByDaylightBackup.Settings;
 using DeadByDaylightBackup.Utility;
+using DeadByDaylightBackup.Utility.Trigger;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace DeadByDaylightBackup.Program
 {
-    public class FilePathHandler : IFilePathHandler
+    public class FilePathHandler : ADisposable, IFilePathHandler
     {
-        private readonly IDictionary<long, FilePath> BackupStore = new Dictionary<long, FilePath>();
-        private readonly IList<IFilePathTrigger> Triggerlist = new List<IFilePathTrigger>(1);
+        private readonly IDictionary<long, FilePath> FilePathStore;
+        private readonly IDictionary<long, FileSystemWatcher> FileWatchers;
 
-        // private readonly FileUtility _filemanager;
         private readonly FilePathSettingsManager _settingManager;
 
         private readonly ILogger _logger;
+        private readonly ITriggerLauncher<FilePath> _triggerLauncher;
 
-        public FilePathHandler(//FileUtility filemanager,
-            FilePathSettingsManager settingManager, ILogger logger)
+        public FilePathHandler(ITriggerLauncher<FilePath> TriggerLauncher, FilePathSettingsManager settingManager, ILogger logger) : base()
         {
+            FileWatchers = new Dictionary<long, FileSystemWatcher>();
+            FilePathStore = new Dictionary<long, FilePath>();
+            _triggerLauncher = TriggerLauncher;
             _settingManager = settingManager;
-            //_filemanager = filemanager;
             _logger = logger;
-            long id = 1;
             foreach (var setting in _settingManager.GetSettings())
             {
-                if (FileUtility.FileExists(setting.Path))
-                {
-                    setting.Id = id;
-                    BackupStore.Add(id, setting);
-                    id++;
-                }
-            }
-        }
-
-        public void Dispose()
-        {
-            lock (Triggerlist)
-            {
-                _settingManager.SaveSettings(BackupStore.Values.ToArray());
-                Triggerlist.Clear();
-                BackupStore.Clear();
+                CreateFilePath(setting.Path);
             }
         }
 
@@ -57,21 +45,22 @@ namespace DeadByDaylightBackup.Program
                     {
                         Path = path
                     };
-                    lock (BackupStore)
+                    lock (FilePathStore)
                     {
-                        if (BackupStore.Any(x => x.Value.Path.Equals(path, StringComparison.OrdinalIgnoreCase)))
+                        if (FilePathStore.Any(x => x.Value.Path.Equals(path, StringComparison.OrdinalIgnoreCase)))
                         {
-                            return BackupStore.First(x => x.Value.Path.Equals(path, StringComparison.OrdinalIgnoreCase)).Key;
+                            return FilePathStore.First(x => x.Value.Path.Equals(path, StringComparison.OrdinalIgnoreCase)).Key;
                         }
                         else
                             for (long i = 0; i < long.MaxValue; i++)
                             {
-                                if (!BackupStore.ContainsKey(i))
+                                if (!FilePathStore.ContainsKey(i))
                                 {
                                     filePath.Id = i;
-                                    BackupStore.Add(i, filePath);
-                                    TriggerCreate(filePath);
-                                    _settingManager.SaveSettings(BackupStore.Values.ToArray());
+                                    FilePathStore.Add(i, filePath);
+                                    _triggerLauncher.TriggerCreationEvent(filePath);
+                                    _settingManager.SaveSettings(FilePathStore.Values.ToArray());
+                                    CreateFileWachter(filePath);
                                     return i;
                                 }
                             }
@@ -82,8 +71,61 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Log(LogLevel.Fatal, ex, "Failed to add filepath '{0}' Because of {1}", path, ex.Message);
+                _logger.Fatal(ex, "Failed to add filepath '{0}' Because of {1}", path, ex.Message);
                 throw;
+            }
+        }
+
+        private void CreateFileWachter(FilePath filePath)
+        {
+            lock (FileWatchers)
+            {
+                try
+                {
+                    string path = Path.GetDirectoryName(filePath.Path);
+                    var watcher = new FileSystemWatcher(path, "*")
+                    {
+                        EnableRaisingEvents = true,
+                        NotifyFilter = NotifyFilters.Attributes | NotifyFilters.CreationTime | NotifyFilters.FileName |
+                        NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.Security
+                    };
+                    FileWatchers.Add(filePath.Id, watcher);
+                    watcher.Changed += (o, i) =>
+                    {
+                        if (FileUtility.FileExists(filePath.Path))
+                        {
+                            _triggerLauncher.TriggerUpdateEvent(filePath);
+                        }
+                        else
+                        {
+                            DeleteWatcher(filePath.Id);
+                        }
+                    };
+                    watcher.Deleted += (o, i) =>
+                    {
+                        DeleteFilePath(filePath.Id);
+                    };
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error(ex, "Could not monitor file: ", filePath.Path);
+                }
+            }
+        }
+
+        private void DeleteWatcher(long id)
+        {
+            lock (FileWatchers)
+            {
+                if (FileWatchers.ContainsKey(id))
+                    try
+                    {
+                        FileWatchers[id].Dispose();
+                    }
+                    finally
+                    {
+                        FileWatchers.Remove(id);
+                    }
             }
         }
 
@@ -91,14 +133,15 @@ namespace DeadByDaylightBackup.Program
         {
             try
             {
-                lock (BackupStore)
+                lock (FilePathStore)
                 {
-                    if (BackupStore.ContainsKey(id))
+                    if (FilePathStore.ContainsKey(id))
                     {
-                        var backup = BackupStore[id];
-                        BackupStore.Remove(id);
-                        TriggerDelete(id);
-                        _settingManager.SaveSettings(BackupStore.Values.ToArray());
+                        var backup = FilePathStore[id];
+                        FilePathStore.Remove(id);
+                        _triggerLauncher.TriggerDeletionEvent(backup);
+                        _settingManager.SaveSettings(FilePathStore.Values.ToArray());
+                        DeleteWatcher(id);
                     }
                     else
                     {
@@ -113,70 +156,11 @@ namespace DeadByDaylightBackup.Program
             }
         }
 
-        public void Register(IFilePathTrigger trigger)
-        {
-            try
-            {
-                lock (Triggerlist)
-                {
-                    if (Triggerlist.Contains(trigger))
-                    {
-                        throw new InvalidOperationException("Trigger already Registered");
-                    }
-                    else
-                    {
-                        Triggerlist.Add(trigger);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Log(LogLevel.Warn, ex, "Failed to register trigger  Because of {0}", ex.Message);
-                throw;
-            }
-            foreach (var val in this.BackupStore.Values)
-            {
-                trigger.AddFilePath(val);
-            }
-        }
-
-        private void TriggerCreate(FilePath backup)
-        {
-            lock (Triggerlist)
-                foreach (IFilePathTrigger trigger in Triggerlist)
-                {
-                    try
-                    {
-                        trigger.AddFilePath(backup);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Log(LogLevel.Warn, ex, "{1} has caused an errror!", trigger.GetType());
-                    }
-                }
-        }
-
-        private void TriggerDelete(long id)
-        {
-            lock (Triggerlist)
-                foreach (IFilePathTrigger trigger in Triggerlist)
-                {
-                    try
-                    {
-                        trigger.RemoveFilePath(id);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Log(LogLevel.Warn, ex, "{1} has caused an errror!", trigger.GetType());
-                    }
-                }
-        }
-
         public FilePath[] GetAllFilePaths()
         {
             try
             {
-                return BackupStore.Values.ToArray();
+                return FilePathStore.Values.ToArray();
             }
             catch (Exception ex)
             {
@@ -190,7 +174,7 @@ namespace DeadByDaylightBackup.Program
             try
             {
                 var result = FileUtility.FullFileSearch("381210", "*.profjce");
-                lock (BackupStore)
+                lock (FilePathStore)
                 {
                     return result.Select(x => CreateFilePath(x)).ToArray();
                 }
@@ -206,9 +190,9 @@ namespace DeadByDaylightBackup.Program
         {
             try
             {
-                lock (BackupStore)
+                lock (FilePathStore)
                 {
-                    FilePath path = BackupStore.Values.Single(x => x.UserCode == backup.UserCode);
+                    FilePath path = FilePathStore.Values.Single(x => x.UserCode == backup.UserCode);
                     FileUtility.Copy(backup.FullFileName, path.Path);
                 }
             }
@@ -216,6 +200,21 @@ namespace DeadByDaylightBackup.Program
             {
                 _logger.Log(LogLevel.Fatal, ex, "Failed to get Restore backup '{0}' because of {1}", backup.FullFileName, ex.Message);
                 throw;
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _settingManager.SaveSettings(FilePathStore.Values.ToArray());
+
+                FilePathStore.Clear();
+                foreach (var x in FileWatchers.Keys)
+                {
+                    DeleteWatcher(x);
+                }
+                FileWatchers.Clear();
             }
         }
     }

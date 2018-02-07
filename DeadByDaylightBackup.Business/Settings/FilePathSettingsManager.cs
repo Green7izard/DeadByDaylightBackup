@@ -1,4 +1,5 @@
 ﻿using DeadByDaylightBackup.Data;
+using DeadByDaylightBackup.Utility.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace DeadByDaylightBackup.Settings
     public class FilePathSettingsManager : SettingsManager<FilePath>
     {
         public FilePathSettingsManager() : base("FilePaths")
-        {        }
+        { }
 
         protected override ICollection<FilePath> ConvertFromText(string input)
         {

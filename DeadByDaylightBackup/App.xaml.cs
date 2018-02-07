@@ -1,6 +1,8 @@
-﻿using DeadByDaylightBackup.Logging;
+﻿using DeadByDaylightBackup.Data;
+using DeadByDaylightBackup.Logging;
 using DeadByDaylightBackup.Program;
 using DeadByDaylightBackup.Settings;
+using DeadByDaylightBackup.Utility.Trigger;
 using DeadByDaylightBackup.View;
 using System;
 using System.Configuration;
@@ -20,12 +22,24 @@ namespace DeadByDaylightBackup
             //Config.AddDllHelper();
             Config.SetUpLogger();
             _logger = LoggerFactory.GetLogger("Main App");
+            _FilePathTriggerManager = Config.GetFilePathTrigger();
+            _BackupTriggerManager = Config.GetBackupTrigger();
         }
 
         /// <summary>
         /// Logger
         /// </summary>
         private readonly ILogger _logger;
+
+        /// <summary>
+        /// Trigger manager for the FIlepath
+        /// </summary>
+        private readonly TriggerManager<FilePath> _FilePathTriggerManager;
+
+        /// <summary>
+        /// Trigger manager for backups
+        /// </summary>
+        private readonly TriggerManager<Backup> _BackupTriggerManager;
 
         /// <summary>
         /// The window to keep track off. Disposed when the app is disposed
@@ -42,6 +56,7 @@ namespace DeadByDaylightBackup
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -50,14 +65,17 @@ namespace DeadByDaylightBackup
         /// <param name="final"></param>
         protected virtual void Dispose(bool final)
         {
-            _window.Close();
-            _window = null;
-            GC.SuppressFinalize(this);
+            if (final)
+            {
+                _window.Close();
+                _window = null;
+                _BackupTriggerManager.Dispose();
+                _FilePathTriggerManager.Dispose();
+            }
         }
 
         #endregion IDisposable
 
-     
         /// <summary>
         /// Startup functionality
         /// </summary>
@@ -69,18 +87,20 @@ namespace DeadByDaylightBackup
             {
                 int savesToKeep = int.Parse(ConfigurationManager.AppSettings["SavesToKeep"]);
 
-                //Manage dependencies
-                // FileUtility manager = new FileManager();
-                FilePathHandler filehandle = new FilePathHandler(//manager,
+                //Filehandler setup
+                FilePathHandler filehandle = new FilePathHandler(_FilePathTriggerManager.GetTriggerLauncher(),
                     new FilePathSettingsManager(), LoggerFactory.GetLogger("FileHandler"));
-                BackupHandler backuphandle = new BackupHandler(savesToKeep,//manager,
-                    new BackupSettingsManager(), LoggerFactory.GetLogger("BackupHandler"));
+                BackupHandler backuphandle = new BackupHandler(_BackupTriggerManager.GetTriggerLauncher(),
+                    savesToKeep, new BackupSettingsManager(), LoggerFactory.GetLogger("BackupHandler"));
+
                 _window = new MainWindow(filehandle, backuphandle, LoggerFactory.GetLogger("UserInterface"));
+                _FilePathTriggerManager.RegisterTrigger(_window);
+                _BackupTriggerManager.RegisterTrigger(_window);
                 _window.ShowInTaskbar = true;
             }
             catch (Exception ex)
             {
-                _logger.Log(LogLevel.Fatal,ex, "Fatal error in set up occured! {0}", ex.Message);
+                _logger.Log(LogLevel.Fatal, ex, "Fatal error in set up occured! {0}", ex.Message);
                 throw;
             }
             base.OnStartup(e);
@@ -92,7 +112,7 @@ namespace DeadByDaylightBackup
         /// Execute the application
         /// </summary>
         /// <param name="window">The maind window to execute</param>
-        private void ExectuteApplication(Window window)
+        private void ExectuteApplication(MainWindow window)
         {
             try
             {

@@ -89,10 +89,6 @@ namespace DeadByDaylightBackup.View
             MaxHeight = MaxRowHeight;
         }
 
-        protected override void Dispose(bool final)
-        {
-        }
-
         protected override void SetRow(int value)
         {
             DateLabel.SetValue(Grid.RowProperty, value);

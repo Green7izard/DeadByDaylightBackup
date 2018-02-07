@@ -88,7 +88,6 @@
       <Link>Properties\Version.cs</Link>
     </Compile>
     <Compile Include="Config.cs" />
-    <Compile Include="DLLHelper.cs" />
     <Compile Include="View\BackupRow.cs" />
     <Compile Include="View\FilePathRow.cs" />
     <Compile Include="View\IdentifyableRowDefinition.cs" />
@@ -152,6 +151,10 @@
     <ProjectReference Include="..\DeadByDaylightBackup.Logging\DeadByDaylightBackup.Logging.csproj">
       <Project>{cbb0cb05-13ad-45d2-b634-424324a7a2da}</Project>
       <Name>DeadByDaylightBackup.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DeadByDaylightBackup.Utility\DeadByDaylightBackup.Utility.csproj">
+      <Project>{114ed89d-5163-4b82-85b9-b2d9b9f09c93}</Project>
+      <Name>DeadByDaylightBackup.Utility</Name>
     </ProjectReference>
     <ProjectReference Include="..\DeadByDaylightBackup.Version\DeadByDaylightBackup.Version.csproj">
       <Project>{9572ba24-829d-4813-8dd3-f05e44de2bfb}</Project>

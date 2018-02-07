@@ -9,7 +9,7 @@ namespace DeadByDaylightBackup.Settings
     public class FilePathSettingsManager : SettingsManager<FilePath>
     {
         public FilePathSettingsManager() : base("FilePaths")
-        {        }
+        { }
 
         protected override ICollection<FilePath> ConvertFromText(string input)
         {

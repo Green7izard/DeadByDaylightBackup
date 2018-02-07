@@ -18,6 +18,6 @@
         /// Trigger on the Update of a object
         /// </summary>
         /// <param name="input">Created object</param>
-        void TriggerUpdateEVent(T input);
+        void TriggerUpdateEvent(T input);
     }
 }

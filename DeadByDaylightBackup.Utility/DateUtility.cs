@@ -94,7 +94,6 @@ namespace DeadByDaylightBackup.Utility
 
         #endregion longdate
 
-
         #region Utility
 
         /// <summary>
@@ -116,8 +115,9 @@ namespace DeadByDaylightBackup.Utility
         /// <returns>Rounded DateTime</returns>
         public static DateTime? RoundUp(this DateTime? dt, TimeSpan d)
         {
-            return dt.HasValue? (DateTime?)dt.Value.RoundUp(d):null;
+            return dt.HasValue ? (DateTime?)dt.Value.RoundUp(d) : null;
         }
-        #endregion
+
+        #endregion Utility
     }
 }

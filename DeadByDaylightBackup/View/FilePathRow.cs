@@ -1,6 +1,5 @@
 ﻿using DeadByDaylightBackup.Data;
 using DeadByDaylightBackup.Utility;
-using System.IO;
 using System.Windows.Controls;
 
 namespace DeadByDaylightBackup.View
@@ -10,8 +9,6 @@ namespace DeadByDaylightBackup.View
     /// </summary>
     public class FilePathRow : IdentifyableRowDefinition<FilePath>
     {
-        private FileSystemWatcher watcher;
-
         public Button DeleteRowButton
         {
             get;
@@ -76,13 +73,6 @@ namespace DeadByDaylightBackup.View
             };
             DateLabel.SetValue(Grid.ColumnProperty, 2);
             MaxHeight = MaxRowHeight;
-            string path = Path.GetDirectoryName(Identity.Path);
-            watcher = new FileSystemWatcher(path, Identity.FileName);
-            watcher.Changed += (o, i) =>
-            {
-                if (FileUtility.FileExists(Identity.Path))
-                    Refresh();
-            };
         }
 
         /// <summary>
@@ -92,11 +82,6 @@ namespace DeadByDaylightBackup.View
         {
             SizeLabel.Content = FileUtility.GetReadableFileSize(Identity.Path);
             DateLabel.Content = FileUtility.GetLastEditDate(Identity.Path).SimpleLongFormat();
-        }
-
-        protected override void Dispose(bool final)
-        {
-            watcher.Dispose();
         }
 
         protected override void SetRow(int value)

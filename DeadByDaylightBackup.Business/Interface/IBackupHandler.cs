@@ -10,6 +10,7 @@ namespace DeadByDaylightBackup.Interface
         void DeleteBackup(long id);
 
         ICollection<Backup> GetBackups();
+
         void CleanupOldBackups();
     }
 }

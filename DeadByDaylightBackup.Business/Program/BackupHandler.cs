@@ -142,9 +142,6 @@ namespace DeadByDaylightBackup.Program
             }
         }
 
-     
-
-
         public void CleanupOldBackups()
         {
             try
@@ -162,7 +159,7 @@ namespace DeadByDaylightBackup.Program
                         Backup[] latestsDateIds = dateGroups.Where(x => x != null && x.Date != null)
                             .OrderByDescending(x => x.Date).Take(_numberOfSavesTokeep).ToArray();
                         var idsForDeletion = BackupStore.Values.Where(x => !latestsDateIds.Any(y => y.Id == x.Id) && x.Id != largestFile.Id
-                         && x.UserCode == group.Key).Select(x=>x.Id);
+                         && x.UserCode == group.Key).Select(x => x.Id);
                         RemoveBackups(idsForDeletion);
                     }
                 }

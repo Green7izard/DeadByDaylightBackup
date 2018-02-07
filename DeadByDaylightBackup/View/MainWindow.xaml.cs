@@ -16,6 +16,7 @@ namespace DeadByDaylightBackup.View
     {
         #region privates
 
+        private List<FilePath> Updates;
         private readonly IFilePathHandler filepathHandler;
         private readonly IBackupHandler backupHandler;
 
@@ -26,6 +27,7 @@ namespace DeadByDaylightBackup.View
 
         public MainWindow(IFilePathHandler fileHandler, IBackupHandler backupHand, ILogger logger) : base()
         {
+            Updates = new List<FilePath>();
             _logger = logger;
             fileRows = new List<FilePathRow>(2);
             backupRows = new List<BackUpRow>(2);
@@ -38,6 +40,7 @@ namespace DeadByDaylightBackup.View
             BackupNowButton.Click += (o, i) => BackUpAll(o, i);
             SearchPathsButton.Click += (o, i) => SearchPaths(o, i);
             CleanupBackupsButton.Click += (o, i) => CleanupOldBackups(o, i);
+            Activated += (o, i) => Activation(o, i);
         }
 
         #endregion privates
@@ -57,7 +60,7 @@ namespace DeadByDaylightBackup.View
             {
                 CreationTrigger(x);
             }
-            base.ShowDialog();          
+            base.ShowDialog();
         }
 
         #endregion startUp
@@ -240,13 +243,32 @@ namespace DeadByDaylightBackup.View
 
         public void UpdateTrigger(FilePath input)
         {
-            lock (fileRows)
+            lock (Updates)
             {
-                if (fileRows.Any(x => x.Identity.Equals(input)))
+                Updates.Add(input);
+            }
+        }
+
+        private void Activation(object o, EventArgs i)
+        {
+            lock (Updates)
+            {
+                foreach (var input in Updates.Distinct())
                 {
-                    var row = fileRows.First(x => x.Identity.Equals(input));
-                    row.Refresh();
+                    lock (fileRows)
+                    {
+                        if (fileRows.Any(x => x.Identity.Equals(input)))
+                        {
+                            var row = fileRows.First(x => x.Identity.Equals(input));
+                            row.Refresh();
+                            if (AutoSaveBox.IsChecked.GetValueOrDefault(false))
+                            {
+                                backupHandler.CreateBackup(input);
+                            }
+                        }
+                    }
                 }
+                Updates.Clear();
             }
         }
 

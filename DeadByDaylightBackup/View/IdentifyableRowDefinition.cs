@@ -1,5 +1,4 @@
 ﻿using DeadByDaylightBackup.Data;
-using System;
 using System.Windows.Controls;
 
 namespace DeadByDaylightBackup.View
@@ -8,7 +7,7 @@ namespace DeadByDaylightBackup.View
     /// Class that is the base for grid rows of specific types!
     /// </summary>
     /// <typeparam name="T">Type of Identifiyable</typeparam>
-    public abstract class IdentifyableRowDefinition<T> : RowDefinition, IDisposable where T : Identifyable
+    public abstract class IdentifyableRowDefinition<T> : RowDefinition where T : Identifyable
     {
         /// <summary>
         /// Max hight of the Rows and its Contents
@@ -32,21 +31,6 @@ namespace DeadByDaylightBackup.View
             Identity = input;
             MaxHeight = MaxRowHeight;
         }
-
-        /// <summary>
-        /// Disposable
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Abstract dispose function. To be called
-        /// </summary>
-        /// <param name="final"></param>
-        protected abstract void Dispose(bool final);
 
         /// <summary>
         /// RowNumber in the Datagrid!

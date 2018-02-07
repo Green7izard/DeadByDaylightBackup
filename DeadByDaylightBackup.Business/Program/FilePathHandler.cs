@@ -1,20 +1,22 @@
 ﻿using DeadByDaylightBackup.Data;
 using DeadByDaylightBackup.Interface;
 using DeadByDaylightBackup.Logging;
+using DeadByDaylightBackup.Logging.Helper;
 using DeadByDaylightBackup.Settings;
 using DeadByDaylightBackup.Utility;
 using DeadByDaylightBackup.Utility.Trigger;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace DeadByDaylightBackup.Program
 {
     public class FilePathHandler : ADisposable, IFilePathHandler
     {
-        private readonly IDictionary<long, FilePath> FilePathStore = new Dictionary<long, FilePath>();
+        private readonly IDictionary<long, FilePath> FilePathStore;
+        private readonly IDictionary<long, FileSystemWatcher> FileWatchers;
 
-        // private readonly FileUtility _filemanager;
         private readonly FilePathSettingsManager _settingManager;
 
         private readonly ILogger _logger;
@@ -22,19 +24,14 @@ namespace DeadByDaylightBackup.Program
 
         public FilePathHandler(ITriggerLauncher<FilePath> TriggerLauncher, FilePathSettingsManager settingManager, ILogger logger) : base()
         {
+            FileWatchers = new Dictionary<long, FileSystemWatcher>();
+            FilePathStore = new Dictionary<long, FilePath>();
             _triggerLauncher = TriggerLauncher;
             _settingManager = settingManager;
-            //_filemanager = filemanager;
             _logger = logger;
-            long id = 1;
             foreach (var setting in _settingManager.GetSettings())
             {
-                if (FileUtility.FileExists(setting.Path))
-                {
-                    setting.Id = id;
-                    FilePathStore.Add(id, setting);
-                    id++;
-                }
+                CreateFilePath(setting.Path);
             }
         }
 
@@ -63,6 +60,7 @@ namespace DeadByDaylightBackup.Program
                                     FilePathStore.Add(i, filePath);
                                     _triggerLauncher.TriggerCreationEvent(filePath);
                                     _settingManager.SaveSettings(FilePathStore.Values.ToArray());
+                                    CreateFileWachter(filePath);
                                     return i;
                                 }
                             }
@@ -73,8 +71,61 @@ namespace DeadByDaylightBackup.Program
             }
             catch (Exception ex)
             {
-                _logger.Log(LogLevel.Fatal, ex, "Failed to add filepath '{0}' Because of {1}", path, ex.Message);
+                _logger.Fatal(ex, "Failed to add filepath '{0}' Because of {1}", path, ex.Message);
                 throw;
+            }
+        }
+
+        private void CreateFileWachter(FilePath filePath)
+        {
+            lock (FileWatchers)
+            {
+                try
+                {
+                    string path = Path.GetDirectoryName(filePath.Path);
+                    var watcher = new FileSystemWatcher(path, "*")
+                    {
+                        EnableRaisingEvents = true,
+                        NotifyFilter = NotifyFilters.Attributes | NotifyFilters.CreationTime | NotifyFilters.FileName |
+                        NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.Security
+                    };
+                    FileWatchers.Add(filePath.Id, watcher);
+                    watcher.Changed += (o, i) =>
+                    {
+                        if (FileUtility.FileExists(filePath.Path))
+                        {
+                            _triggerLauncher.TriggerUpdateEvent(filePath);
+                        }
+                        else
+                        {
+                            DeleteWatcher(filePath.Id);
+                        }
+                    };
+                    watcher.Deleted += (o, i) =>
+                    {
+                        DeleteFilePath(filePath.Id);
+                    };
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error(ex, "Could not monitor file: ", filePath.Path);
+                }
+            }
+        }
+
+        private void DeleteWatcher(long id)
+        {
+            lock (FileWatchers)
+            {
+                if (FileWatchers.ContainsKey(id))
+                    try
+                    {
+                        FileWatchers[id].Dispose();
+                    }
+                    finally
+                    {
+                        FileWatchers.Remove(id);
+                    }
             }
         }
 
@@ -90,6 +141,7 @@ namespace DeadByDaylightBackup.Program
                         FilePathStore.Remove(id);
                         _triggerLauncher.TriggerDeletionEvent(backup);
                         _settingManager.SaveSettings(FilePathStore.Values.ToArray());
+                        DeleteWatcher(id);
                     }
                     else
                     {
@@ -103,7 +155,6 @@ namespace DeadByDaylightBackup.Program
                 throw;
             }
         }
-
 
         public FilePath[] GetAllFilePaths()
         {
@@ -157,7 +208,13 @@ namespace DeadByDaylightBackup.Program
             if (disposing)
             {
                 _settingManager.SaveSettings(FilePathStore.Values.ToArray());
+
                 FilePathStore.Clear();
+                foreach (var x in FileWatchers.Keys)
+                {
+                    DeleteWatcher(x);
+                }
+                FileWatchers.Clear();
             }
         }
     }

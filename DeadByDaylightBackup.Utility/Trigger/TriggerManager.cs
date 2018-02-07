@@ -110,9 +110,9 @@ namespace DeadByDaylightBackup.Utility.Trigger
             _launcher.TriggerDeletionEvent(deleted);
         }
 
-        public void TriggerUpdateEVent(T input)
+        public void TriggerUpdateEvent(T input)
         {
-            _launcher.TriggerUpdateEVent(input);
+            _launcher.TriggerUpdateEvent(input);
         }
 
         #endregion ITriggerLauncher<T>

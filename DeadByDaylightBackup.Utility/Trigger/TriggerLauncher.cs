@@ -12,11 +12,11 @@ namespace DeadByDaylightBackup.Utility.Trigger
     public class TriggerLauncher<T> : ITriggerLauncher<T>
     {
         protected readonly ILogger _logger;
-        protected readonly ITriggerHandler<T> _triggerHanlder;
+        protected readonly ITriggerHandler<T> _triggerHandler;
 
         public TriggerLauncher(ITriggerHandler<T> triggerHandler, ILogger logger)
         {
-            _triggerHanlder = triggerHandler;
+            _triggerHandler = triggerHandler;
             _logger = logger;
         }
 
@@ -26,7 +26,7 @@ namespace DeadByDaylightBackup.Utility.Trigger
         /// <param name="input">Created object</param>
         public void TriggerCreationEvent(T input)
         {
-            var list = _triggerHanlder.GetTriggerList();
+            var list = _triggerHandler.GetTriggerList();
             foreach (var trigger in list)
             {
                 try
@@ -46,7 +46,7 @@ namespace DeadByDaylightBackup.Utility.Trigger
         /// <param name="deleted">Deleted object</param>
         public void TriggerDeletionEvent(T deleted)
         {
-            var list = _triggerHanlder.GetTriggerList();
+            var list = _triggerHandler.GetTriggerList();
             foreach (var trigger in list)
             {
                 try
@@ -64,9 +64,9 @@ namespace DeadByDaylightBackup.Utility.Trigger
         /// Trigger on the Update of a object
         /// </summary>
         /// <param name="input">Created object</param>
-        public void TriggerUpdateEVent(T input)
+        public void TriggerUpdateEvent(T input)
         {
-            var list = _triggerHanlder.GetTriggerList().Where(x => x is IUpdateTrigger<T>)
+            var list = _triggerHandler.GetTriggerList().Where(x => x is IUpdateTrigger<T>)
                 .Select(x => x as IUpdateTrigger<T>).ToArray();
             foreach (var trigger in list)
             {

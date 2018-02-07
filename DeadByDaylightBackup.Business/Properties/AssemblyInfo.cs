@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
 
-
 [assembly: AssemblyTitle("DeadByDaylightBackup.Business")]
 [assembly: AssemblyDescription("business for Dead By Daylight Backup")]
 [assembly: AssemblyProduct("DeadByDaylightBackup.Business")]

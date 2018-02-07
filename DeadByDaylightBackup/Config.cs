@@ -1,8 +1,7 @@
 ﻿using DeadByDaylightBackup.Data;
+using DeadByDaylightBackup.Logging;
 using DeadByDaylightBackup.Logging.SimpleFile;
 using DeadByDaylightBackup.Utility.Trigger;
-using System;
-using DeadByDaylightBackup.Logging;
 
 namespace DeadByDaylightBackup
 {
@@ -18,9 +17,11 @@ namespace DeadByDaylightBackup
         {
             FileLogger.Install();
         }
+
         #region trigger
 
         #region FilePath
+
         /// <summary>
         /// Get a set of triggers for the filepath
         /// </summary>
@@ -30,7 +31,7 @@ namespace DeadByDaylightBackup
             ITriggerHandler<FilePath> handler = GetFilePathHandler(LoggerFactory.GetLogger("FilePathHandler"));
             ITriggerLauncher<FilePath> launcher = GetFilePathHandler(LoggerFactory.GetLogger("FilePathLauncher"), handler);
             return new TriggerManager<FilePath>(handler, launcher);
-        }    
+        }
 
         private static ITriggerHandler<FilePath> GetFilePathHandler(ILogger logger)
         {
@@ -41,7 +42,9 @@ namespace DeadByDaylightBackup
         {
             return new TriggerLauncher<FilePath>(handler, logger);
         }
-        #endregion
+
+        #endregion FilePath
+
         #region backup
 
         public static TriggerManager<Backup> GetBackupTrigger()
@@ -51,7 +54,6 @@ namespace DeadByDaylightBackup
             return new TriggerManager<Backup>(handler, launcher);
         }
 
-        
         private static ITriggerHandler<Backup> GetBackupHandler(ILogger logger)
         {
             return new TriggerHandler<Backup>(logger, true);
@@ -61,9 +63,9 @@ namespace DeadByDaylightBackup
         {
             return new TriggerLauncher<Backup>(handler, logger);
         }
-        #endregion
 
+        #endregion backup
 
-        #endregion
+        #endregion trigger
     }
 }

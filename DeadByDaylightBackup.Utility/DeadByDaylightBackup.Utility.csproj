@@ -57,7 +57,7 @@
     <Compile Include="ADisposable.cs" />
     <Compile Include="DateUtility.cs" />
     <Compile Include="FileUtility.cs" />
-    <Compile Include="Trigger\TriggerSet.cs" />
+    <Compile Include="Trigger\TriggerManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DeadByDaylightBackup.Logging\DeadByDaylightBackup.Logging.csproj">

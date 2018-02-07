@@ -24,7 +24,7 @@ namespace DeadByDaylightBackup.View
 
         private readonly ILogger _logger;
 
-        public MainWindow(IFilePathHandler fileHandler, IBackupHandler backupHand, Logging.ILogger logger) : base()
+        public MainWindow(IFilePathHandler fileHandler, IBackupHandler backupHand, ILogger logger) : base()
         {
             _logger = logger;
             fileRows = new List<FilePathRow>(2);
@@ -32,8 +32,6 @@ namespace DeadByDaylightBackup.View
             InitializeComponent();
             filepathHandler = fileHandler;
             backupHandler = backupHand;
-            filepathHandler.Register(this);
-            backupHandler.Register(this);
             FoldersGrid.ShowGridLines = true;
             BackUpGrid.ShowGridLines = true;
             AddPathButton.Click += (o, i) => AddPathClick(o, i);
@@ -43,6 +41,26 @@ namespace DeadByDaylightBackup.View
         }
 
         #endregion privates
+
+        #region startUp
+
+        /// <summary>
+        /// Activates the window
+        /// </summary>
+        public new void ShowDialog()
+        {
+            foreach (var x in filepathHandler.GetAllFilePaths())
+            {
+                CreationTrigger(x);
+            }
+            foreach (var x in backupHandler.GetBackups())
+            {
+                CreationTrigger(x);
+            }
+            base.ShowDialog();          
+        }
+
+        #endregion startUp
 
         #region buttonHandlers
 
@@ -151,7 +169,6 @@ namespace DeadByDaylightBackup.View
             }
         }
 
-
         public void DeletionTrigger(Backup deleted)
         {
             try
@@ -176,7 +193,7 @@ namespace DeadByDaylightBackup.View
             }
             catch (Exception ex)
             {
-                ShowPopup($"Failed to remove Backup from UI'{deleted.FullFileName?? deleted.Id.ToString()}'!", ex);
+                ShowPopup($"Failed to remove Backup from UI'{deleted.FullFileName ?? deleted.Id.ToString()}'!", ex);
             }
         }
 
@@ -333,8 +350,6 @@ namespace DeadByDaylightBackup.View
                 _logger.Log(LogLevel.Fatal, exception, "Failed to show popup for exception! Message was {0}", message);
             }
         }
-
-    
 
         #endregion UIHelper
     }

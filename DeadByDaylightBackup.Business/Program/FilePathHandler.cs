@@ -3,6 +3,7 @@ using DeadByDaylightBackup.Interface;
 using DeadByDaylightBackup.Logging;
 using DeadByDaylightBackup.Settings;
 using DeadByDaylightBackup.Utility;
+using DeadByDaylightBackup.Utility.Trigger;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,16 +12,17 @@ namespace DeadByDaylightBackup.Program
 {
     public class FilePathHandler : ADisposable, IFilePathHandler
     {
-        private readonly IDictionary<long, FilePath> BackupStore = new Dictionary<long, FilePath>();
-        private readonly IList<IFilePathTrigger> Triggerlist = new List<IFilePathTrigger>(1);
+        private readonly IDictionary<long, FilePath> FilePathStore = new Dictionary<long, FilePath>();
 
         // private readonly FileUtility _filemanager;
         private readonly FilePathSettingsManager _settingManager;
 
         private readonly ILogger _logger;
+        private readonly ITriggerLauncher<FilePath> _triggerLauncher;
 
-        public FilePathHandler(FilePathSettingsManager settingManager, ILogger logger) : base()
+        public FilePathHandler(ITriggerLauncher<FilePath> TriggerLauncher, FilePathSettingsManager settingManager, ILogger logger) : base()
         {
+            _triggerLauncher = TriggerLauncher;
             _settingManager = settingManager;
             //_filemanager = filemanager;
             _logger = logger;
@@ -30,7 +32,7 @@ namespace DeadByDaylightBackup.Program
                 if (FileUtility.FileExists(setting.Path))
                 {
                     setting.Id = id;
-                    BackupStore.Add(id, setting);
+                    FilePathStore.Add(id, setting);
                     id++;
                 }
             }
@@ -46,21 +48,21 @@ namespace DeadByDaylightBackup.Program
                     {
                         Path = path
                     };
-                    lock (BackupStore)
+                    lock (FilePathStore)
                     {
-                        if (BackupStore.Any(x => x.Value.Path.Equals(path, StringComparison.OrdinalIgnoreCase)))
+                        if (FilePathStore.Any(x => x.Value.Path.Equals(path, StringComparison.OrdinalIgnoreCase)))
                         {
-                            return BackupStore.First(x => x.Value.Path.Equals(path, StringComparison.OrdinalIgnoreCase)).Key;
+                            return FilePathStore.First(x => x.Value.Path.Equals(path, StringComparison.OrdinalIgnoreCase)).Key;
                         }
                         else
                             for (long i = 0; i < long.MaxValue; i++)
                             {
-                                if (!BackupStore.ContainsKey(i))
+                                if (!FilePathStore.ContainsKey(i))
                                 {
                                     filePath.Id = i;
-                                    BackupStore.Add(i, filePath);
-                                    TriggerCreate(filePath);
-                                    _settingManager.SaveSettings(BackupStore.Values.ToArray());
+                                    FilePathStore.Add(i, filePath);
+                                    _triggerLauncher.TriggerCreationEvent(filePath);
+                                    _settingManager.SaveSettings(FilePathStore.Values.ToArray());
                                     return i;
                                 }
                             }
@@ -80,14 +82,14 @@ namespace DeadByDaylightBackup.Program
         {
             try
             {
-                lock (BackupStore)
+                lock (FilePathStore)
                 {
-                    if (BackupStore.ContainsKey(id))
+                    if (FilePathStore.ContainsKey(id))
                     {
-                        var backup = BackupStore[id];
-                        BackupStore.Remove(id);
-                        TriggerDelete(backup);
-                        _settingManager.SaveSettings(BackupStore.Values.ToArray());
+                        var backup = FilePathStore[id];
+                        FilePathStore.Remove(id);
+                        _triggerLauncher.TriggerDeletionEvent(backup);
+                        _settingManager.SaveSettings(FilePathStore.Values.ToArray());
                     }
                     else
                     {
@@ -102,70 +104,12 @@ namespace DeadByDaylightBackup.Program
             }
         }
 
-        public void Register(IFilePathTrigger trigger)
-        {
-            try
-            {
-                lock (Triggerlist)
-                {
-                    if (Triggerlist.Contains(trigger))
-                    {
-                        throw new InvalidOperationException("Trigger already Registered");
-                    }
-                    else
-                    {
-                        Triggerlist.Add(trigger);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Log(LogLevel.Warn, ex, "Failed to register trigger  Because of {0}", ex.Message);
-                throw;
-            }
-            foreach (var val in this.BackupStore.Values)
-            {
-                trigger.CreationTrigger(val);
-            }
-        }
-
-        private void TriggerCreate(FilePath backup)
-        {
-            lock (Triggerlist)
-                foreach (IFilePathTrigger trigger in Triggerlist)
-                {
-                    try
-                    {
-                        trigger.CreationTrigger(backup);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Log(LogLevel.Warn, ex, "{1} has caused an errror!", trigger.GetType());
-                    }
-                }
-        }
-
-        private void TriggerDelete(FilePath id)
-        {
-            lock (Triggerlist)
-                foreach (IFilePathTrigger trigger in Triggerlist)
-                {
-                    try
-                    {
-                        trigger.DeletionTrigger(id);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Log(LogLevel.Warn, ex, "{1} has caused an errror!", trigger.GetType());
-                    }
-                }
-        }
 
         public FilePath[] GetAllFilePaths()
         {
             try
             {
-                return BackupStore.Values.ToArray();
+                return FilePathStore.Values.ToArray();
             }
             catch (Exception ex)
             {
@@ -179,7 +123,7 @@ namespace DeadByDaylightBackup.Program
             try
             {
                 var result = FileUtility.FullFileSearch("381210", "*.profjce");
-                lock (BackupStore)
+                lock (FilePathStore)
                 {
                     return result.Select(x => CreateFilePath(x)).ToArray();
                 }
@@ -195,9 +139,9 @@ namespace DeadByDaylightBackup.Program
         {
             try
             {
-                lock (BackupStore)
+                lock (FilePathStore)
                 {
-                    FilePath path = BackupStore.Values.Single(x => x.UserCode == backup.UserCode);
+                    FilePath path = FilePathStore.Values.Single(x => x.UserCode == backup.UserCode);
                     FileUtility.Copy(backup.FullFileName, path.Path);
                 }
             }
@@ -211,12 +155,10 @@ namespace DeadByDaylightBackup.Program
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-                lock (Triggerlist)
-                {
-                    _settingManager.SaveSettings(BackupStore.Values.ToArray());
-                    Triggerlist.Clear();
-                    BackupStore.Clear();
-                }
+            {
+                _settingManager.SaveSettings(FilePathStore.Values.ToArray());
+                FilePathStore.Clear();
+            }
         }
     }
 }

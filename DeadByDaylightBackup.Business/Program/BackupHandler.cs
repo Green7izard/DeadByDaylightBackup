@@ -3,6 +3,7 @@ using DeadByDaylightBackup.Interface;
 using DeadByDaylightBackup.Logging;
 using DeadByDaylightBackup.Settings;
 using DeadByDaylightBackup.Utility;
+using DeadByDaylightBackup.Utility.Trigger;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,6 @@ namespace DeadByDaylightBackup.Program
     public class BackupHandler : IBackupHandler
     {
         private readonly IDictionary<long, Backup> BackupStore = new Dictionary<long, Backup>();
-        private readonly IList<IBackupFileTrigger> Triggerlist = new List<IBackupFileTrigger>(1);
         private readonly int _numberOfSavesTokeep;
 
         private static readonly TimeSpan RoundingFactor = new TimeSpan(0, 15, 0);
@@ -24,10 +24,11 @@ namespace DeadByDaylightBackup.Program
         private readonly BackupSettingsManager _settingManager;
 
         private readonly ILogger _logger;
+        private ITriggerLauncher<Backup> _triggerLauncher;
 
-        public BackupHandler(int numberOfSaves, //FileUtility filemanager,
-            BackupSettingsManager settingManager, ILogger logger)
+        public BackupHandler(ITriggerLauncher<Backup> triggerLauncher, int numberOfSaves, BackupSettingsManager settingManager, ILogger logger)
         {
+            _triggerLauncher = triggerLauncher;
             _numberOfSavesTokeep = numberOfSaves;
             _settingManager = settingManager;
             //_filemanager = filemanager;
@@ -78,7 +79,7 @@ namespace DeadByDaylightBackup.Program
                                 FileUtility.CreateDirectory(Playerfolder);
                                 FileUtility.Copy(filepath.Path, targetFile);
                                 BackupStore.Add(i, curBackup);
-                                TriggerCreate(curBackup);
+                                _triggerLauncher.TriggerCreationEvent(curBackup);
                                 return i;
                             }
                         }
@@ -110,7 +111,7 @@ namespace DeadByDaylightBackup.Program
                         {
                             BackupStore.Remove(id);
                         }
-                        TriggerDelete(backup);
+                        _triggerLauncher.TriggerDeletionEvent(backup);
                         //  _settingManager.SaveSettings(BackupStore.Values.ToArray());
                         FileUtility.DeleteFile(backup.FullFileName);
                     }
@@ -141,65 +142,8 @@ namespace DeadByDaylightBackup.Program
             }
         }
 
-        public void Register(IBackupFileTrigger trigger)
-        {
-            try
-            {
-                lock (Triggerlist)
-                {
-                    if (Triggerlist.Contains(trigger))
-                    {
-                        throw new InvalidOperationException("Trigger already Registered");
-                    }
-                    else
-                    {
-                        Triggerlist.Add(trigger);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Log(LogLevel.Warn, ex, "Failed to register trigger because of {0}", ex.Message);
-                throw;
-            }
+     
 
-            foreach (var val in this.BackupStore.Values)
-            {
-                trigger.CreationTrigger(val);
-            }
-        }
-
-        private void TriggerCreate(Backup backup)
-        {
-            lock (Triggerlist)
-                foreach (IBackupFileTrigger trigger in Triggerlist)
-                {
-                    try
-                    {
-                        trigger.CreationTrigger(backup);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Log(LogLevel.Warn, ex, "{1} has caused an errror!", trigger.GetType());
-                    }
-                }
-        }
-
-        private void TriggerDelete(Backup id)
-        {
-            lock (Triggerlist)
-                foreach (IBackupFileTrigger trigger in Triggerlist)
-                {
-                    try
-                    {
-                        trigger.DeletionTrigger(id);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Log(LogLevel.Warn, ex, "{1} has caused an errror!", trigger.GetType());
-                    }
-                }
-        }
 
         public void CleanupOldBackups()
         {
@@ -217,7 +161,8 @@ namespace DeadByDaylightBackup.Program
                             .LastOrDefault(x => x.Id != largestFile.Id)).ToArray();
                         Backup[] latestsDateIds = dateGroups.Where(x => x != null && x.Date != null)
                             .OrderByDescending(x => x.Date).Take(_numberOfSavesTokeep).ToArray();
-                        var idsForDeletion = BackupStore.Keys.Where(x => !latestsDateIds.Any(y => y.Id == x) && x != largestFile.Id);
+                        var idsForDeletion = BackupStore.Values.Where(x => !latestsDateIds.Any(y => y.Id == x.Id) && x.Id != largestFile.Id
+                         && x.UserCode == group.Key).Select(x=>x.Id);
                         RemoveBackups(idsForDeletion);
                     }
                 }

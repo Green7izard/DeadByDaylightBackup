@@ -5,8 +5,6 @@ namespace DeadByDaylightBackup.Interface
 {
     public interface IBackupHandler
     {
-        void Register(IBackupFileTrigger trigger);
-
         long CreateBackup(FilePath fullFilePath);
 
         void DeleteBackup(long id);

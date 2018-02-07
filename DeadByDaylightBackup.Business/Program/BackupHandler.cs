@@ -56,7 +56,7 @@ namespace DeadByDaylightBackup.Program
 
                 lock (BackupStore)
                 {
-                    Backup curBackup = BackupStore.Select(x => x.Value).FirstOrDefault(x => x.Date.RoundUp(RoundingFactor) == x.Date.RoundUp(RoundingFactor)
+                    Backup curBackup = BackupStore.Select(x => x.Value).FirstOrDefault(x => x.Date.RoundUp(RoundingFactor) == filepath.LastEdited.RoundUp(RoundingFactor)
                       && x.UserCode.Equals(userCode));
                     if (curBackup != null)
                     {

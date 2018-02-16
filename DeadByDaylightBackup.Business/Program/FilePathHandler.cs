@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace DeadByDaylightBackup.Program
 {
@@ -92,13 +93,10 @@ namespace DeadByDaylightBackup.Program
                     FileWatchers.Add(filePath.Id, watcher);
                     watcher.Changed += (o, i) =>
                     {
+                        Thread.Sleep(1000);
                         if (FileUtility.FileExists(filePath.Path))
                         {
                             _triggerLauncher.TriggerUpdateEvent(filePath);
-                        }
-                        else
-                        {
-                            DeleteWatcher(filePath.Id);
                         }
                     };
                     watcher.Deleted += (o, i) =>

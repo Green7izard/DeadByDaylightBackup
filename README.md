@@ -1,3 +1,6 @@
+# Since Patch 1.8.2c all saves are in the Cloud!
+# Discontinued and obsolete!
+
 # DeadByDaylightBackup
 Simple Backup tool for Dead By Daylight Save Files
 
